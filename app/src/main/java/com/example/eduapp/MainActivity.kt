@@ -39,6 +39,11 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.room.Room
 import com.example.eduapp.database.AppDatabase
+import com.example.eduapp.screen.GameScreen
+import com.example.eduapp.screen.LandingScreen
+import com.example.eduapp.screen.ScoreScreen
+import com.example.eduapp.screen.SettingScreen
+import com.example.eduapp.screen.TestDBScreen
 import com.example.eduapp.ui.theme.EduAppTheme
 import com.example.eduapp.viewmodel.AppViewModel
 import com.example.eduapp.viewmodel.AppViewModelFactory
@@ -60,7 +65,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun AppNav (currentContext: Context) {
     val navController = rememberNavController ()
-    NavHost ( navController = navController, startDestination = "testDB" ) {
+    NavHost ( navController = navController, startDestination = "landing" ) { //testDB
         composable ( "landing" ) {
             LandingScreen (navController)
         }
@@ -68,7 +73,7 @@ fun AppNav (currentContext: Context) {
             SettingScreen (navController)
         }
         composable ( "game" ) {
-            GameScreen (navController)
+            GameScreen (currentContext, navController)
         }
         composable ( "score" ) {
             ScoreScreen (navController)
@@ -77,36 +82,6 @@ fun AppNav (currentContext: Context) {
     }
 }
 
-//landing screen
-@Composable
-
-fun LandingScreen(navController: NavHostController, modifier: Modifier = Modifier) {
-
-    Scaffold(
-
-        topBar = { TopAppBar(title = { Text("Landing Screen") }) }
-
-    ) {
-
-            innerPadding ->
-
-        Column(modifier
-
-            .fillMaxSize()
-
-            .padding(innerPadding)
-
-            .padding(16.dp)) {
-
-            Button(onClick = {navController.navigate("setting")})
-
-            { Text("Go to Setting") }
-
-        }
-
-    }
-
-}
 
 
 //setting screen
@@ -141,178 +116,12 @@ fun SettingScreen(navController: NavHostController, modifier: Modifier = Modifie
 }
 
 
-//game screen
-@Composable
 
-fun GameScreen(navController: NavHostController, modifier: Modifier = Modifier) {
 
-    Scaffold(
 
-        topBar = { TopAppBar(title = { Text("Game Screen") }) }
 
-    ) {
 
-            innerPadding ->
 
-        Column(modifier
-
-            .fillMaxSize()
-
-            .padding(innerPadding)
-
-            .padding(16.dp)) {
-
-            Button(onClick = {navController.navigate("score")})
-
-            { Text("Display Score") }
-
-        }
-
-    }
-
-}
-
-
-//score screen
-@Composable
-
-fun ScoreScreen(navController: NavHostController, modifier: Modifier = Modifier) {
-
-    Scaffold(
-
-        topBar = { TopAppBar(title = { Text("Score Screen") }) }
-
-    ) {
-
-            innerPadding ->
-
-        Column(modifier
-
-            .fillMaxSize()
-
-            .padding(innerPadding)
-
-            .padding(16.dp)) {
-
-            Button(onClick = {navController.navigate("landing")})
-
-            { Text("Go Back to Landing") }
-
-        }
-
-    }
-
-}
-
-
-//test db screen
-@Composable
-
-fun TestDBScreen(currentContext: Context, modifier: Modifier = Modifier) {
-
-    //steps to work with DB
-
-    val db = Room.databaseBuilder(
-
-        currentContext,
-
-        AppDatabase::class.java,
-
-        "app_db"
-
-    ).build()
-
-    val factory = AppViewModelFactory(db.appDao())
-
-    val viewModel: AppViewModel = viewModel(factory = factory)
-
-    val users by viewModel.users.collectAsStateWithLifecycle(initialValue = emptyList())
-
-
-
-    var name by remember { mutableStateOf("") }
-
-    Column(
-
-        modifier
-
-            .fillMaxSize()
-
-            .padding(16.dp)
-
-    ) {
-
-        OutlinedTextField(
-
-            value = name,
-
-            onValueChange = { name = it },
-
-            label = { Text("Username") },
-
-            modifier = Modifier.fillMaxWidth()
-
-        )
-
-
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-
-
-        Row {
-
-            Button(onClick = {
-
-                viewModel.addUser(name)
-
-                name = ""
-
-            }) {
-
-                Text("Add User")
-
-            }
-
-
-
-            Spacer(modifier = Modifier.width(8.dp))
-
-
-
-            Button(onClick = {
-
-                viewModel.clearUsers()
-
-            }) {
-
-                Text("Clear")
-
-            }
-
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        LazyColumn {
-
-            items(users) { user ->
-
-                Text(
-
-                    text = "ID: ${user.id}, ${user.username}, score=${user.score}, level=${user.level}"
-
-                )
-
-            }
-
-        }
-
-    }
-
-
-
-}
 
 
 
