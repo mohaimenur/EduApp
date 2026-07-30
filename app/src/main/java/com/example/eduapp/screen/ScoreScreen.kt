@@ -1,29 +1,35 @@
 package com.example.eduapp.screen
 
-import androidx.compose.foundation.layout.Arrangement
+
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import com.example.eduapp.viewmodel.AppViewModel
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
+private val dateFormat = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
+
+// Final screen: a table of every past game session, most recent first
+// (ordering comes from AppDao's query - see database/AppDao.kt).
+// Mirrors the reference app's "SCORE LIST" screen.
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ScoreScreen(
@@ -31,53 +37,55 @@ fun ScoreScreen(
     appViewModel: AppViewModel,
     modifier: Modifier = Modifier
 ) {
+    // AppViewModel.users is a Flow from Room - collectAsStateWithLifecycle
+    // turns it into Compose state and re-runs this composable automatically
+    // whenever a new row is inserted (e.g. right after a game finishes).
     val users by appViewModel.users.collectAsStateWithLifecycle(initialValue = emptyList())
 
     Scaffold(
-        topBar = { TopAppBar(title = { Text("EduApp - High Scores") }) }
+        topBar = { TopAppBar(title = { Text("SCORE LIST") }) }
     ) { innerPadding ->
         Column(
-            modifier = modifier
+            modifier
                 .fillMaxSize()
                 .padding(innerPadding)
                 .padding(16.dp)
         ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(text = "Player", style = MaterialTheme.typography.titleMedium)
-                Text(text = "Score", style = MaterialTheme.typography.titleMedium)
-                Text(text = "Time", style = MaterialTheme.typography.titleMedium)
+            // Header row - weights must match the data row below so columns line up.
+            Row(modifier = Modifier.fillMaxWidth()) {
+                Text("Name", Modifier.weight(2f), fontWeight = FontWeight.Bold)
+                Text("Level", Modifier.weight(1f), fontWeight = FontWeight.Bold)
+                Text("Score", Modifier.weight(1f), fontWeight = FontWeight.Bold)
+                Text("MM:SS", Modifier.weight(1f), fontWeight = FontWeight.Bold)
+                Text("Date", Modifier.weight(2f), fontWeight = FontWeight.Bold)
             }
-            
-            Spacer(modifier = Modifier.height(8.dp))
-            
-            LazyColumn(modifier = Modifier.weight(1f)) {
+
+            // LazyColumn only composes rows currently on screen, so this
+            // stays cheap even with a long score history.
+            LazyColumn(modifier = Modifier.padding(top = 8.dp)) {
                 items(users) { user ->
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(vertical = 4.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween
+                            .padding(vertical = 4.dp)
                     ) {
-                        Text(text = user.username)
-                        Text(text = "${user.score}/30")
-                        Text(text = "${user.duration}s")
+                        Text(user.username, Modifier.weight(2f))
+                        Text(user.level, Modifier.weight(1f))
+                        Text("${user.score}", Modifier.weight(1f))
+                        // duration is stored in whole seconds; format as M:SS.
+                        Text(
+                            "${user.duration / 60}:${(user.duration % 60).toString().padStart(2, '0')}",
+                            Modifier.weight(1f)
+                        )
+                        Text(dateFormat.format(Date(user.date)), Modifier.weight(2f))
                     }
                 }
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
-
             Button(
-                onClick = { navController.navigate("landing") {
-                    popUpTo("landing") { inclusive = true }
-                } },
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text("Play Again")
-            }
+                onClick = { navController.navigate("landing") },
+                modifier = Modifier.padding(top = 16.dp)
+            ) { Text("Go Back to Landing") }
         }
     }
 }
