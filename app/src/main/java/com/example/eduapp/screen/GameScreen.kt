@@ -64,9 +64,10 @@ fun GameScreen(
     val imageBitmap = puzzle?.let { rememberAssetImage(it.imagePath) }
 
     Column(
-        modifier
+        modifier = modifier
             .fillMaxSize()
             .padding(16.dp),
+        verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         // Status row: Score / Puzzle X of 3 / elapsed time.
