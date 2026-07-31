@@ -7,16 +7,29 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.List
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.room.Room
 import com.example.eduapp.database.AppDatabase
@@ -53,6 +66,8 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun AppNav(currentContext: Context) {
     val navController = rememberNavController()
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = navBackStackEntry?.destination?.route
 
     // Built once per app launch and shared by every screen that touches the
     // database (Game writes results, Score reads them).
@@ -68,32 +83,74 @@ fun AppNav(currentContext: Context) {
     var username by remember { mutableStateOf("") }
     var selectedLevel by remember { mutableStateOf("1") }
 
-    NavHost(navController = navController, startDestination = "landing") {
-        composable("landing") {
-            LandingScreen(
-                navController = navController,
-                username = username,
-                onUsernameChange = { username = it }
-            )
+    val title = when (currentRoute) {
+        "landing" -> "Welcome To The Game"
+        "setting" -> "SETTING"
+        "game" -> "Game Screen"
+        "score" -> "SCORE LIST"
+        else -> "EduApp"
+    }
+
+    Scaffold(
+        topBar = { TopAppBar(title = { Text(title) }) },
+        bottomBar = {
+            if (currentRoute != "game") {
+                NavigationBar {
+                    NavigationBarItem(
+                        selected = currentRoute == "landing",
+                        onClick = { navController.navigate("landing") {
+                            popUpTo("landing") { inclusive = true }
+                        } },
+                        icon = { Icon(Icons.Default.Home, contentDescription = "Home") },
+                        label = { Text("Home") },
+                    )
+                    NavigationBarItem(
+                        selected = currentRoute == "setting",
+                        onClick = { navController.navigate("setting") },
+                        icon = { Icon(Icons.Default.Settings, contentDescription = "Settings") },
+                        label = { Text("Settings") }
+                    )
+                    NavigationBarItem(
+                        selected = currentRoute == "score",
+                        onClick = { navController.navigate("score") },
+                        icon = { Icon(Icons.AutoMirrored.Filled.List, contentDescription = "Score") },
+                        label = { Text("Score") }
+                    )
+                }
+            }
         }
-        composable("setting") {
-            SettingScreen(
-                navController = navController,
-                selectedLevel = selectedLevel,
-                onLevelChange = { selectedLevel = it }
-            )
-        }
-        composable("game") {
-            GameScreen(
-                currentContext = currentContext,
-                navController = navController,
-                gameViewModel = gameViewModel,
-                username = username,
-                level = selectedLevel
-            )
-        }
-        composable("score") {
-            ScoreScreen(navController = navController, appViewModel = appViewModel)
+    ) { innerPadding ->
+        NavHost(
+            navController = navController,
+            startDestination = "landing",
+            modifier = Modifier.padding(innerPadding)
+        ) {
+            composable("landing") {
+                LandingScreen(
+                    navController = navController,
+                    username = username,
+                    onUsernameChange = { username = it }
+                )
+            }
+            composable("setting") {
+                SettingScreen(
+                    navController = navController,
+                    selectedLevel = selectedLevel,
+                    onLevelChange = { selectedLevel = it }
+                )
+            }
+            composable("game") {
+                GameScreen(
+                    currentContext = currentContext,
+                    navController = navController,
+                    gameViewModel = gameViewModel,
+                    username = username,
+                    level = selectedLevel
+                )
+            }
+            composable("score") {
+                ScoreScreen(navController = navController, appViewModel = appViewModel)
+            }
         }
     }
 }

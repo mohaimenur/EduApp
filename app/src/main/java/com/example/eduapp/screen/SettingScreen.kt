@@ -11,9 +11,7 @@ import androidx.compose.material3.ExposedDropdownMenuAnchorType
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -41,55 +39,50 @@ fun SettingScreen(
     // shared app state, so it's fine as local screen state.
     var expanded by remember { mutableStateOf(false) }
 
-    Scaffold(
-        topBar = { TopAppBar(title = { Text("SETTING") }) }
-    ) { innerPadding ->
-        Column(
-            modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-                .padding(16.dp)
+    Column(
+        modifier
+            .fillMaxSize()
+            .padding(16.dp)
+    ) {
+        Text("Select a level")
+
+        // Standard Material3 dropdown pattern: a read-only text field
+        // that opens a menu of choices when tapped.
+        ExposedDropdownMenuBox(
+            expanded = expanded,
+            onExpandedChange = { expanded = it },
+            modifier = Modifier.padding(top = 8.dp)
         ) {
-            Text("Select a level")
-
-            // Standard Material3 dropdown pattern: a read-only text field
-            // that opens a menu of choices when tapped.
-            ExposedDropdownMenuBox(
-                expanded = expanded,
-                onExpandedChange = { expanded = it },
-                modifier = Modifier.padding(top = 8.dp)
-            ) {
-                OutlinedTextField(
-                    value = "Level $selectedLevel",
-                    onValueChange = {}, // read-only: text only changes via the menu below
-                    readOnly = true,
-                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable, true) // anchors the dropdown menu to this field
-                )
-                ExposedDropdownMenu(
-                    expanded = expanded,
-                    onDismissRequest = { expanded = false }
-                ) {
-                    LEVELS.forEach { lvl ->
-                        DropdownMenuItem(
-                            text = { Text("Level $lvl") },
-                            onClick = {
-                                onLevelChange(lvl) // reports the pick back up to AppNav
-                                expanded = false
-                            }
-                        )
-                    }
-                }
-            }
-
-            Button(
-                onClick = { navController.navigate("game") },
+            OutlinedTextField(
+                value = "Level $selectedLevel",
+                onValueChange = {}, // read-only: text only changes via the menu below
+                readOnly = true,
+                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 16.dp)
-            ) { Text("GO") }
+                    .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable, true) // anchors the dropdown menu to this field
+            )
+            ExposedDropdownMenu(
+                expanded = expanded,
+                onDismissRequest = { expanded = false }
+            ) {
+                LEVELS.forEach { lvl ->
+                    DropdownMenuItem(
+                        text = { Text("Level $lvl") },
+                        onClick = {
+                            onLevelChange(lvl) // reports the pick back up to AppNav
+                            expanded = false
+                        }
+                    )
+                }
+            }
         }
+
+        Button(
+            onClick = { navController.navigate("game") },
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 16.dp)
+        ) { Text("GO") }
     }
 }
