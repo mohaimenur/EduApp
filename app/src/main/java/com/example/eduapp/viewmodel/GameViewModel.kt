@@ -105,11 +105,12 @@ class GameViewModel(private val dao: AppDao) : ViewModel() {
         val puzzle = currentPuzzle ?: return
         val userAnswer = answerInput.trim().toIntOrNull()
         val correct = userAnswer != null && userAnswer == puzzle.answer
+        
         if (correct) {
             score += POINTS_PER_PUZZLE
-            dialogMessage = "Congratulations! That's correct."
+            dialogMessage = "Correct! Your brain is on fire! ⚡"
         } else {
-            dialogMessage = "Not quite - the answer was ${puzzle.answer}."
+            dialogMessage = "Error 404: Brain not found! The answer was ${puzzle.answer}. 🤖"
         }
     }
 
