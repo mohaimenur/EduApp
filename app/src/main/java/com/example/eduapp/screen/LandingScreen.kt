@@ -1,18 +1,25 @@
 package com.example.eduapp.screen
 
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.example.eduapp.R
 
 // First screen the player sees. Just captures a username, then hands off to
 // level selection. Mirrors the reference app's "Welcome To The Game" +
@@ -28,9 +35,24 @@ fun LandingScreen(
         modifier = modifier
             .fillMaxSize()
             .padding(16.dp),
-        verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        Spacer(Modifier.weight(1f)) // Push content down a bit
+
+        Image(
+            painter = painterResource(id = R.mipmap.ic_launcher_foreground),
+            contentDescription = "App Logo",
+            modifier = Modifier.size(120.dp)
+        )
+
+        Text(
+            text = "BrainDrain",
+            fontSize = 32.sp,
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.primary,
+            modifier = Modifier.padding(bottom = 24.dp)
+        )
+
         // username/onUsernameChange are "hoisted" - the actual value lives
         // in AppNav, this composable just displays it and reports changes
         // back up, so the value survives navigating to other screens.
@@ -51,5 +73,7 @@ fun LandingScreen(
                 .fillMaxWidth()
                 .padding(top = 16.dp)
         ) { Text("PLAY") }
+
+        Spacer(Modifier.weight(2f)) // Larger spacer at bottom pushes content above middle
     }
 }

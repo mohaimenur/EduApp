@@ -67,9 +67,10 @@ fun GameScreen(
         modifier = modifier
             .fillMaxSize()
             .padding(16.dp),
-        verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        Spacer(Modifier.weight(0.5f))
+
         // Status row: Score / Puzzle X of 3 / elapsed time.
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -128,6 +129,8 @@ fun GameScreen(
             Text("User: $username")
             Text("Level: $level")
         }
+
+        Spacer(Modifier.weight(1f))
     }
 
     // Result popup shown after CHECK, mirroring the reference app's

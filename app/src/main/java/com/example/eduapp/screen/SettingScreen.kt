@@ -1,7 +1,7 @@
 package com.example.eduapp.screen
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -45,9 +45,10 @@ fun SettingScreen(
         modifier = modifier
             .fillMaxSize()
             .padding(16.dp),
-        verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        Spacer(Modifier.weight(1f))
+
         Text("Select a level")
 
         // Standard Material3 dropdown pattern: a read-only text field
@@ -88,5 +89,7 @@ fun SettingScreen(
                 .fillMaxWidth()
                 .padding(top = 16.dp)
         ) { Text("GO") }
+
+        Spacer(Modifier.weight(2f))
     }
 }

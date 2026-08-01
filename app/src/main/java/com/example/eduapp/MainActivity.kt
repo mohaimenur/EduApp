@@ -84,11 +84,11 @@ fun AppNav(currentContext: Context) {
     var selectedLevel by remember { mutableStateOf("1") }
 
     val title = when (currentRoute) {
-        "landing" -> "Welcome To The Game"
+        "landing" -> ""
         "setting" -> "SETTING"
         "game" -> "Game Screen"
         "score" -> "SCORE LIST"
-        else -> "EduApp"
+        else -> ""
     }
 
     Scaffold(

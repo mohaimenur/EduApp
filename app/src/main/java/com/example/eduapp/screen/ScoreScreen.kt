@@ -1,8 +1,8 @@
 package com.example.eduapp.screen
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -42,9 +42,10 @@ fun ScoreScreen(
         modifier = modifier
             .fillMaxSize()
             .padding(16.dp),
-        verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        Spacer(Modifier.weight(1f))
+
         // Header row - weights must match the data row below so columns line up.
         Row(modifier = Modifier.fillMaxWidth()) {
             Text("Name", Modifier.weight(2f), fontWeight = FontWeight.Bold)
@@ -56,7 +57,7 @@ fun ScoreScreen(
 
         // LazyColumn only composes rows currently on screen, so this
         // stays cheap even with a long score history.
-        LazyColumn(modifier = Modifier.padding(top = 8.dp)) {
+        LazyColumn(modifier = Modifier.padding(top = 8.dp).weight(1f, fill = false)) {
             items(users) { user ->
                 Row(
                     modifier = Modifier
@@ -75,5 +76,7 @@ fun ScoreScreen(
                 }
             }
         }
+
+        Spacer(Modifier.weight(2f))
     }
 }
