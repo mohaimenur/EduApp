@@ -1,19 +1,29 @@
 package com.example.eduapp.screen
 
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
@@ -44,39 +54,96 @@ fun ScoreScreen(
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Spacer(Modifier.weight(1f))
+        Spacer(Modifier.weight(0.2f))
 
-        // Header row - weights must match the data row below so columns line up.
-        Row(modifier = Modifier.fillMaxWidth()) {
-            Text("Name", Modifier.weight(2f), fontWeight = FontWeight.Bold)
-            Text("Level", Modifier.weight(1f), fontWeight = FontWeight.Bold)
-            Text("Score", Modifier.weight(1f), fontWeight = FontWeight.Bold)
-            Text("MM:SS", Modifier.weight(1f), fontWeight = FontWeight.Bold)
-            Text("Date", Modifier.weight(2f), fontWeight = FontWeight.Bold)
-        }
+        Text(
+            text = "SCORE HISTORY",
+            style = MaterialTheme.typography.headlineSmall,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.padding(bottom = 16.dp)
+        )
 
-        // LazyColumn only composes rows currently on screen, so this
-        // stays cheap even with a long score history.
-        LazyColumn(modifier = Modifier.padding(top = 8.dp).weight(1f, fill = false)) {
-            items(users) { user ->
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 4.dp)
-                ) {
-                    Text(user.username, Modifier.weight(2f))
-                    Text(user.level, Modifier.weight(1f))
-                    Text("${user.score}", Modifier.weight(1f))
-                    // duration is stored in whole seconds; format as M:SS.
-                    Text(
-                        "${user.duration / 60}:${(user.duration % 60).toString().padStart(2, '0')}",
-                        Modifier.weight(1f)
-                    )
-                    Text(dateFormat.format(Date(user.date)), Modifier.weight(2f))
+        // The Table Container
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .border(1.dp, Color.Gray)
+        ) {
+            // Header row
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(IntrinsicSize.Min)
+                    .border(0.5.dp, Color.Gray)
+            ) {
+                TableCell(text = "Name", weight = 2f, isHeader = true)
+                VerticalDivider()
+                TableCell(text = "Lvl", weight = 0.8f, isHeader = true)
+                VerticalDivider()
+                TableCell(text = "Score", weight = 1.2f, isHeader = true)
+                VerticalDivider()
+                TableCell(text = "Time", weight = 1.2f, isHeader = true)
+                VerticalDivider()
+                TableCell(text = "Date", weight = 2.5f, isHeader = true)
+            }
+
+            // LazyColumn for the data rows
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f, fill = false)
+            ) {
+                items(users) { user ->
+                    HorizontalDivider(thickness = 0.5.dp, color = Color.Gray)
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(IntrinsicSize.Min)
+                    ) {
+                        TableCell(text = user.username, weight = 2f)
+                        VerticalDivider()
+                        TableCell(text = user.level, weight = 0.8f)
+                        VerticalDivider()
+                        TableCell(text = "${user.score}", weight = 1.2f)
+                        VerticalDivider()
+                        TableCell(
+                            text = "${user.duration / 60}:${(user.duration % 60).toString().padStart(2, '0')}",
+                            weight = 1.2f
+                        )
+                        VerticalDivider()
+                        TableCell(text = dateFormat.format(Date(user.date)), weight = 2.5f)
+                    }
                 }
             }
         }
 
-        Spacer(Modifier.weight(2f))
+        Spacer(Modifier.weight(0.5f))
     }
+}
+
+@Composable
+fun VerticalDivider() {
+    Spacer(
+        modifier = Modifier
+            .fillMaxHeight()
+            .width(1.dp)
+            .border(0.5.dp, Color.Gray)
+    )
+}
+
+@Composable
+fun RowScope.TableCell(
+    text: String,
+    weight: Float,
+    isHeader: Boolean = false
+) {
+    Text(
+        text = text,
+        modifier = Modifier
+            .weight(weight)
+            .padding(8.dp),
+        fontWeight = if (isHeader) FontWeight.Bold else FontWeight.Normal,
+        textAlign = TextAlign.Center,
+        maxLines = 1
+    )
 }
