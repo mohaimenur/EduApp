@@ -76,11 +76,11 @@ fun ScoreScreen(
                     .height(IntrinsicSize.Min)
                     .border(0.5.dp, Color.Gray)
             ) {
-                TableCell(text = "Name", weight = 2f, isHeader = true)
+                TableCell(text = "Name", weight = 2.2f, isHeader = true)
                 VerticalDivider()
                 TableCell(text = "Lvl", weight = 0.8f, isHeader = true)
                 VerticalDivider()
-                TableCell(text = "Score", weight = 1.2f, isHeader = true)
+                TableCell(text = "Score", weight = 1.5f, isHeader = true)
                 VerticalDivider()
                 TableCell(text = "Time", weight = 1.2f, isHeader = true)
                 VerticalDivider()
@@ -100,11 +100,11 @@ fun ScoreScreen(
                             .fillMaxWidth()
                             .height(IntrinsicSize.Min)
                     ) {
-                        TableCell(text = user.username, weight = 2f)
+                        TableCell(text = user.username, weight = 2.2f)
                         VerticalDivider()
                         TableCell(text = user.level, weight = 0.8f)
                         VerticalDivider()
-                        TableCell(text = "${user.score}", weight = 1.2f)
+                        TableCell(text = "${user.score}", weight = 1.5f)
                         VerticalDivider()
                         TableCell(
                             text = "${user.duration / 60}:${(user.duration % 60).toString().padStart(2, '0')}",
@@ -141,7 +141,7 @@ fun RowScope.TableCell(
         text = text,
         modifier = Modifier
             .weight(weight)
-            .padding(8.dp),
+            .padding(4.dp),
         fontWeight = if (isHeader) FontWeight.Bold else FontWeight.Normal,
         textAlign = TextAlign.Center,
         maxLines = 1

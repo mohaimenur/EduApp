@@ -1,6 +1,7 @@
 package com.example.eduapp.screen
 
 import android.content.Context
+import android.media.MediaPlayer
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -21,9 +22,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.example.eduapp.R
 import com.example.eduapp.helper.rememberAssetImage
 import com.example.eduapp.viewmodel.GameViewModel
 
@@ -54,6 +57,25 @@ fun GameScreen(
         if (gameViewModel.gameFinished) {
             navController.navigate("score") {
                 popUpTo("landing")
+            }
+        }
+    }
+
+    // Play sound effects when a result dialog appears
+    val context = LocalContext.current
+    LaunchedEffect(gameViewModel.dialogMessage) {
+        gameViewModel.dialogMessage?.let {
+            val resId = if (gameViewModel.isLastAnswerCorrect) {
+                context.resources.getIdentifier("correct_answer_beep", "raw", context.packageName)
+            } else {
+                context.resources.getIdentifier("wrong_answer_beep", "raw", context.packageName)
+            }
+            
+            if (resId != 0) {
+                MediaPlayer.create(context, resId)?.apply {
+                    setOnCompletionListener { release() }
+                    start()
+                }
             }
         }
     }

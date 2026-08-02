@@ -48,6 +48,8 @@ class GameViewModel(private val dao: AppDao) : ViewModel() {
     var answerInput by mutableStateOf("")
     var dialogMessage by mutableStateOf<String?>(null)
         private set
+    var isLastAnswerCorrect by mutableStateOf(false)
+        private set
 
     // Flips to true once all 3 puzzles are done - GameScreen watches this and
     // navigates to the Score screen when it changes.
@@ -76,6 +78,7 @@ class GameViewModel(private val dao: AppDao) : ViewModel() {
         elapsedSeconds = 0
         answerInput = ""
         dialogMessage = null
+        isLastAnswerCorrect = false
         gameFinished = false
         startTimer()
     }
@@ -105,6 +108,7 @@ class GameViewModel(private val dao: AppDao) : ViewModel() {
         val puzzle = currentPuzzle ?: return
         val userAnswer = answerInput.trim().toIntOrNull()
         val correct = userAnswer != null && userAnswer == puzzle.answer
+        isLastAnswerCorrect = correct
         
         if (correct) {
             score += POINTS_PER_PUZZLE
