@@ -14,6 +14,7 @@ import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
@@ -52,7 +53,7 @@ class MainActivity : ComponentActivity() {
         // longer than the Activity lives.
         val currentContext = applicationContext
         setContent {
-            EduAppTheme {
+            EduAppTheme(dynamicColor = false) {
                 AppNav(currentContext)
             }
         }
@@ -92,6 +93,7 @@ fun AppNav(currentContext: Context) {
     }
 
     Scaffold(
+        containerColor = MaterialTheme.colorScheme.background,
         topBar = { TopAppBar(title = { Text(title) }) },
         bottomBar = {
             if (currentRoute != "game") {
