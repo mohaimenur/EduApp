@@ -1,0 +1,38 @@
+<resources>
+    <string name="app_name">BrainDrain</string>
+    <string name="welcome">खेल में आपका स्वागत है</string>
+    <string name="enter_username">उपयोगकर्ता नाम दर्ज करें...</string>
+    <string name="play">खेलें</string>
+    <string name="select_level">स्तर चुनें</string>
+    <string name="level_label">स्तर %1$s</string>
+    <string name="go">जाएं</string>
+    <string name="settings">सेटिंग्स</string>
+    <string name="home">होम</string>
+    <string name="score">स्कोर</string>
+    <string name="score_list">स्कोर सूची</string>
+    <string name="game_screen_title">गेम स्क्रीन</string>
+    <string name="language">भाषा</string>
+    <string name="select_language">भाषा चुनें</string>
+
+    <!-- Score Screen -->
+    <string name="score_history">स्कोर इतिहास</string>
+    <string name="table_name">नाम</string>
+    <string name="table_lvl">स्तर</string>
+    <string name="table_score">स्कोर</string>
+    <string name="table_time">समय</string>
+    <string name="table_date">दिनांक</string>
+    <string name="play_again">फिर से खेलें</string>
+
+    <!-- Game Screen -->
+    <string name="game_score">स्कोर: %1$d (/%2$d)</string>
+    <string name="game_puzzle_index">पहेली: %1$d (/%2$d)</string>
+    <string name="game_duration">अवधि: %1$d सेकंड</string>
+    <string name="game_error_image">त्रुटि: पहेली छवि लोड नहीं हो सकी</string>
+    <string name="game_enter_answer">अपना उत्तर दर्ज करें...</string>
+    <string name="game_check">जांचें</string>
+    <string name="game_user">उपयोगकर्ता: %1$s</string>
+    <string name="game_level">स्तर: %1$s</string>
+    <string name="game_ok">ठीक है</string>
+    <string name="game_correct">सही! आपका दिमाग बहुत तेज़ है! ⚡</string>
+    <string name="game_wrong">गलत उत्तर! सही उत्तर %1$d था। 🤖</string>
+</resources>

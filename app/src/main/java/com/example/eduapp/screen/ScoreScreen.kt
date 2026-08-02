@@ -26,14 +26,16 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
+import com.example.eduapp.R
 import com.example.eduapp.viewmodel.AppViewModel
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-private val dateFormat = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
+private val dateFormat = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.ENGLISH)
 
 @Composable
 fun ScoreScreen(
@@ -55,7 +57,7 @@ fun ScoreScreen(
         Spacer(Modifier.height(20.dp))
 
         Text(
-            text = "SCORE HISTORY",
+            text = stringResource(R.string.score_history),
             style = MaterialTheme.typography.headlineSmall,
             fontWeight = FontWeight.Bold,
             modifier = Modifier.padding(bottom = 16.dp)
@@ -74,15 +76,15 @@ fun ScoreScreen(
                     .height(IntrinsicSize.Min)
                     .border(0.5.dp, Color.Gray)
             ) {
-                TableCell(text = "Name", weight = 2.2f, isHeader = true)
+                TableCell(text = stringResource(R.string.table_name), weight = 2.2f, isHeader = true)
                 VerticalDivider()
-                TableCell(text = "Lvl", weight = 0.8f, isHeader = true)
+                TableCell(text = stringResource(R.string.table_lvl), weight = 0.8f, isHeader = true)
                 VerticalDivider()
-                TableCell(text = "Score", weight = 1.5f, isHeader = true)
+                TableCell(text = stringResource(R.string.table_score), weight = 1.5f, isHeader = true)
                 VerticalDivider()
-                TableCell(text = "Time", weight = 1.2f, isHeader = true)
+                TableCell(text = stringResource(R.string.table_time), weight = 1.2f, isHeader = true)
                 VerticalDivider()
-                TableCell(text = "Date", weight = 2.5f, isHeader = true)
+                TableCell(text = stringResource(R.string.table_date), weight = 2.5f, isHeader = true)
             }
 
             // Data rows
@@ -97,10 +99,10 @@ fun ScoreScreen(
                     VerticalDivider()
                     TableCell(text = user.level, weight = 0.8f)
                     VerticalDivider()
-                    TableCell(text = "${user.score}", weight = 1.5f)
+                    TableCell(text = String.format(Locale.ENGLISH, "%d", user.score), weight = 1.5f)
                     VerticalDivider()
                     TableCell(
-                        text = "${user.duration / 60}:${(user.duration % 60).toString().padStart(2, '0')}",
+                        text = String.format(Locale.ENGLISH, "%d:%02d", user.duration / 60, user.duration % 60),
                         weight = 1.2f
                     )
                     VerticalDivider()
@@ -117,7 +119,7 @@ fun ScoreScreen(
             },
             modifier = Modifier.padding(top = 24.dp, bottom = 40.dp)
         ) {
-            Text("PLAY AGAIN")
+            Text(stringResource(R.string.play_again))
         }
     }
 }

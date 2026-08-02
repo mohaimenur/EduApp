@@ -1,0 +1,38 @@
+<resources>
+    <string name="app_name">BrainDrain</string>
+    <string name="welcome">欢迎来到游戏</string>
+    <string name="enter_username">请输入用户名...</string>
+    <string name="play">开始</string>
+    <string name="select_level">请选择等级</string>
+    <string name="level_label">等级 %1$s</string>
+    <string name="go">出发</string>
+    <string name="settings">设置</string>
+    <string name="home">主页</string>
+    <string name="score">分数</string>
+    <string name="score_list">得分榜</string>
+    <string name="game_screen_title">游戏界面</string>
+    <string name="language">语言</string>
+    <string name="select_language">选择语言</string>
+
+    <!-- Score Screen -->
+    <string name="score_history">历史成绩</string>
+    <string name="table_name">姓名</string>
+    <string name="table_lvl">等级</string>
+    <string name="table_score">分数</string>
+    <string name="table_time">用时</string>
+    <string name="table_date">日期</string>
+    <string name="play_again">再玩一次</string>
+
+    <!-- Game Screen -->
+    <string name="game_score">分数: %1$d (/%2$d)</string>
+    <string name="game_puzzle_index">题目: %1$d (/%2$d)</string>
+    <string name="game_duration">时长: %1$d秒</string>
+    <string name="game_error_image">错误：无法加载图片</string>
+    <string name="game_enter_answer">请输入您的答案...</string>
+    <string name="game_check">检查</string>
+    <string name="game_user">用户: %1$s</string>
+    <string name="game_level">等级: %1$s</string>
+    <string name="game_ok">确定</string>
+    <string name="game_correct">正确！你的大脑在燃烧！⚡</string>
+    <string name="game_wrong">错误 404：未找到大脑！答案是 %1$d。🤖</string>
+</resources>

@@ -23,7 +23,9 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
+import java.util.Locale
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.eduapp.R
@@ -63,8 +65,8 @@ fun GameScreen(
 
     // Play sound effects when a result dialog appears
     val context = LocalContext.current
-    LaunchedEffect(gameViewModel.dialogMessage) {
-        gameViewModel.dialogMessage?.let {
+    LaunchedEffect(gameViewModel.dialogResult) {
+        gameViewModel.dialogResult?.let {
             val resId = if (gameViewModel.isLastAnswerCorrect) {
                 context.resources.getIdentifier("correct_answer_beep", "raw", context.packageName)
             } else {
@@ -98,9 +100,9 @@ fun GameScreen(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Text("Score: ${gameViewModel.score} (/${gameViewModel.maxScore})")
-            Text("Puzzle: ${gameViewModel.currentIndex + 1} (/${gameViewModel.puzzles.size})")
-            Text("Duration: ${gameViewModel.elapsedSeconds}s")
+            Text(stringResource(R.string.game_score, gameViewModel.score, gameViewModel.maxScore))
+            Text(stringResource(R.string.game_puzzle_index, gameViewModel.currentIndex + 1, gameViewModel.puzzles.size))
+            Text(stringResource(R.string.game_duration, gameViewModel.elapsedSeconds))
         }
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -110,14 +112,14 @@ fun GameScreen(
         if (imageBitmap != null) {
             Image(
                 bitmap = imageBitmap,
-                contentDescription = "Puzzle image",
+                contentDescription = stringResource(R.string.app_name),
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(300.dp)
             )
         } else {
             Text(
-                text = "Error: Could not load puzzle image",
+                text = stringResource(R.string.game_error_image),
                 color = MaterialTheme.colorScheme.error
             )
         }
@@ -128,7 +130,7 @@ fun GameScreen(
         OutlinedTextField(
             value = gameViewModel.answerInput,
             onValueChange = { gameViewModel.answerInput = it },
-            label = { Text("Enter your answer ...") },
+            label = { Text(stringResource(R.string.game_enter_answer)) },
             singleLine = true,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             modifier = Modifier.fillMaxWidth()
@@ -140,7 +142,7 @@ fun GameScreen(
             onClick = { gameViewModel.checkAnswer() },
             enabled = gameViewModel.answerInput.isNotBlank(),
             modifier = Modifier.padding(top = 8.dp)
-        ) { Text("CHECK") }
+        ) { Text(stringResource(R.string.game_check)) }
 
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -148,8 +150,8 @@ fun GameScreen(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Text("User: $username")
-            Text("Level: $level")
+            Text(stringResource(R.string.game_user, username))
+            Text(stringResource(R.string.game_level, level))
         }
 
         Spacer(Modifier.weight(1f))
@@ -159,13 +161,18 @@ fun GameScreen(
     // custom_dialog + Ok button. onDismissRequest is intentionally a no-op
     // so tapping outside the dialog can't skip a puzzle without answering -
     // the only way out is the Ok button, which calls dismissDialogAndAdvance().
-    gameViewModel.dialogMessage?.let { message ->
+    gameViewModel.dialogResult?.let { (isCorrect, answer) ->
+        val message = if (isCorrect) {
+            stringResource(R.string.game_correct)
+        } else {
+            stringResource(R.string.game_wrong, answer)
+        }
         AlertDialog(
             onDismissRequest = { },
             text = { Text(message) },
             confirmButton = {
                 TextButton(onClick = { gameViewModel.dismissDialogAndAdvance() }) {
-                    Text("Ok")
+                    Text(stringResource(R.string.game_ok))
                 }
             }
         )

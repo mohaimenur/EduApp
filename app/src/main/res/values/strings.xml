@@ -1,3 +1,38 @@
 <resources>
     <string name="app_name">BrainDrain</string>
+    <string name="welcome">Welcome to the Game</string>
+    <string name="enter_username">Enter a username …</string>
+    <string name="play">PLAY</string>
+    <string name="select_level">Select a level</string>
+    <string name="level_label">Level %1$s</string>
+    <string name="go">GO</string>
+    <string name="settings">SETTING</string>
+    <string name="home">Home</string>
+    <string name="score">Score</string>
+    <string name="score_list">SCORE LIST</string>
+    <string name="game_screen_title">Game Screen</string>
+    <string name="language">Language</string>
+    <string name="select_language">Select Language</string>
+
+    <!-- Score Screen -->
+    <string name="score_history">SCORE HISTORY</string>
+    <string name="table_name">Name</string>
+    <string name="table_lvl">Lvl</string>
+    <string name="table_score">Score</string>
+    <string name="table_time">Time</string>
+    <string name="table_date">Date</string>
+    <string name="play_again">PLAY AGAIN</string>
+
+    <!-- Game Screen -->
+    <string name="game_score">Score: %1$d (/%2$d)</string>
+    <string name="game_puzzle_index">Puzzle: %1$d (/%2$d)</string>
+    <string name="game_duration">Duration: %1$ds</string>
+    <string name="game_error_image">Error: Could not load puzzle image</string>
+    <string name="game_enter_answer">Enter your answer …</string>
+    <string name="game_check">CHECK</string>
+    <string name="game_user">User: %1$s</string>
+    <string name="game_level">Level: %1$s</string>
+    <string name="game_ok">Ok</string>
+    <string name="game_correct">Correct! Your brain is on fire! ⚡</string>
+    <string name="game_wrong">Error 404: Brain not found! The answer was %1$d. 🤖</string>
 </resources>

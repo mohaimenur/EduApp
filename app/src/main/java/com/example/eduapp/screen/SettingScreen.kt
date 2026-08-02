@@ -21,7 +21,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
+import com.example.eduapp.R
 
 // The 3 difficulty levels correspond 1:1 with the "1"/"2"/"3" asset folders
 // and PuzzleBank.forLevel() - keep these in sync if a level is ever added.
@@ -37,9 +39,7 @@ fun SettingScreen(
     onLevelChange: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    // Only controls whether the dropdown list is open - not part of the
-    // shared app state, so it's fine as local screen state.
-    var expanded by remember { mutableStateOf(false) }
+    var levelExpanded by remember { mutableStateOf(false) }
 
     Column(
         modifier = modifier
@@ -49,34 +49,32 @@ fun SettingScreen(
     ) {
         Spacer(Modifier.weight(1f))
 
-        Text("Select a level")
+        Text(stringResource(R.string.select_level))
 
-        // Standard Material3 dropdown pattern: a read-only text field
-        // that opens a menu of choices when tapped.
         ExposedDropdownMenuBox(
-            expanded = expanded,
-            onExpandedChange = { expanded = it },
+            expanded = levelExpanded,
+            onExpandedChange = { levelExpanded = it },
             modifier = Modifier.padding(top = 8.dp)
         ) {
             OutlinedTextField(
-                value = "Level $selectedLevel",
-                onValueChange = {}, // read-only: text only changes via the menu below
+                value = stringResource(R.string.level_label, selectedLevel),
+                onValueChange = {},
                 readOnly = true,
-                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = levelExpanded) },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable, true) // anchors the dropdown menu to this field
+                    .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable, true)
             )
             ExposedDropdownMenu(
-                expanded = expanded,
-                onDismissRequest = { expanded = false }
+                expanded = levelExpanded,
+                onDismissRequest = { levelExpanded = false }
             ) {
                 LEVELS.forEach { lvl ->
                     DropdownMenuItem(
-                        text = { Text("Level $lvl") },
+                        text = { Text(stringResource(R.string.level_label, lvl)) },
                         onClick = {
-                            onLevelChange(lvl) // reports the pick back up to AppNav
-                            expanded = false
+                            onLevelChange(lvl)
+                            levelExpanded = false
                         }
                     )
                 }
@@ -88,7 +86,7 @@ fun SettingScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 16.dp)
-        ) { Text("GO") }
+        ) { Text(stringResource(R.string.go)) }
 
         Spacer(Modifier.weight(2f))
     }

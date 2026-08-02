@@ -1,0 +1,38 @@
+<resources>
+    <string name="app_name">BrainDrain</string>
+    <string name="welcome">গেমে আপনাকে স্বাগতম</string>
+    <string name="enter_username">ব্যবহারকারীর নাম লিখুন...</string>
+    <string name="play">খেলুন</string>
+    <string name="select_level">একটি স্তর নির্বাচন করুন</string>
+    <string name="level_label">স্তর %1$s</string>
+    <string name="go">শুরু করুন</string>
+    <string name="settings">সেটিংস</string>
+    <string name="home">হোম</string>
+    <string name="score">স্কোর</string>
+    <string name="score_list">স্কোর তালিকা</string>
+    <string name="game_screen_title">গেম স্ক্রিন</string>
+    <string name="language">ভাষা</string>
+    <string name="select_language">ভাষা নির্বাচন করুন</string>
+
+    <!-- Score Screen -->
+    <string name="score_history">স্কোর ইতিহাস</string>
+    <string name="table_name">নাম</string>
+    <string name="table_lvl">স্তর</string>
+    <string name="table_score">স্কোর</string>
+    <string name="table_time">সময়</string>
+    <string name="table_date">তারিখ</string>
+    <string name="play_again">আবার খেলুন</string>
+
+    <!-- Game Screen -->
+    <string name="game_score">স্কোর: %1$d (/%2$d)</string>
+    <string name="game_puzzle_index">ধাঁধা: %1$d (/%2$d)</string>
+    <string name="game_duration">সময়কাল: %1$d সেকেন্ড</string>
+    <string name="game_error_image">ত্রুটি: ধাঁধার ছবি লোড করা যায়নি</string>
+    <string name="game_enter_answer">আপনার উত্তর লিখুন...</string>
+    <string name="game_check">যাচাই করুন</string>
+    <string name="game_user">ব্যবহারকারী: %1$s</string>
+    <string name="game_level">স্তর: %1$s</string>
+    <string name="game_ok">ঠিক আছে</string>
+    <string name="game_correct">সঠিক! আপনার মস্তিষ্ক দারুণ কাজ করছে! ⚡</string>
+    <string name="game_wrong">ভুল উত্তর! সঠিক উত্তর ছিল %1$d। 🤖</string>
+</resources>

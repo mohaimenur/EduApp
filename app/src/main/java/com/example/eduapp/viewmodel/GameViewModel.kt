@@ -46,7 +46,7 @@ class GameViewModel(private val dao: AppDao) : ViewModel() {
     // answerInput is two-way bound to the TextField, dialogMessage is read to
     // decide whether the result AlertDialog is showing.
     var answerInput by mutableStateOf("")
-    var dialogMessage by mutableStateOf<String?>(null)
+    var dialogResult by mutableStateOf<Pair<Boolean, Int>?>(null)
         private set
     var isLastAnswerCorrect by mutableStateOf(false)
         private set
@@ -77,7 +77,7 @@ class GameViewModel(private val dao: AppDao) : ViewModel() {
         score = 0
         elapsedSeconds = 0
         answerInput = ""
-        dialogMessage = null
+        dialogResult = null
         isLastAnswerCorrect = false
         gameFinished = false
         startTimer()
@@ -112,16 +112,14 @@ class GameViewModel(private val dao: AppDao) : ViewModel() {
         
         if (correct) {
             score += POINTS_PER_PUZZLE
-            dialogMessage = "Correct! Your brain is on fire! ⚡"
-        } else {
-            dialogMessage = "Error 404: Brain not found! The answer was ${puzzle.answer}. 🤖"
         }
+        dialogResult = correct to puzzle.answer
     }
 
     // Called when the player taps "Ok" on the result dialog. Moves to the
     // next puzzle, or ends the round if that was the last of the 3.
     fun dismissDialogAndAdvance() {
-        dialogMessage = null
+        dialogResult = null
         answerInput = ""
         if (currentIndex < puzzles.size - 1) {
             currentIndex++
