@@ -26,6 +26,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -85,9 +86,9 @@ fun AppNav(currentContext: Context) {
     // Carried from Landing -> Setting -> Game. Kept here (not inside a
     // screen) because both Landing and Setting need to write to it, and Game
     // needs to read the final values after both have run.
-    var username by remember { mutableStateOf("") }
-    var selectedLevel by remember { mutableStateOf("1") }
-    var language by remember { mutableStateOf("en") }
+    var username by rememberSaveable { mutableStateOf("") }
+    var selectedLevel by rememberSaveable { mutableStateOf("1") }
+    var language by rememberSaveable { mutableStateOf("en") }
 
     val context = LocaleHelper.setLocale(LocalContext.current, language)
 

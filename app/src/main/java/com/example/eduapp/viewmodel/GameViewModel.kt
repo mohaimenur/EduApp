@@ -70,6 +70,10 @@ class GameViewModel(private val dao: AppDao) : ViewModel() {
     // Called once when GameScreen first appears (see GameScreen's
     // LaunchedEffect). Resets all state and picks a fresh set of 3 puzzles.
     fun startGame(username: String, level: String) {
+        // Prevent re-starting the same session on configuration changes (like rotation)
+        if (puzzles.isNotEmpty() && !gameFinished && this.username == username && this.level == level) {
+            return
+        }
         this.username = username
         this.level = level
         puzzles = PuzzleBank.sessionFor(level)

@@ -1,16 +1,20 @@
 package com.example.eduapp.screen
 
 import android.content.Context
+import android.content.res.Configuration
 import android.media.MediaPlayer
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -22,6 +26,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
@@ -68,16 +73,14 @@ fun GameScreen(
     LaunchedEffect(gameViewModel.dialogResult) {
         gameViewModel.dialogResult?.let {
             val resId = if (gameViewModel.isLastAnswerCorrect) {
-                context.resources.getIdentifier("correct_answer_beep", "raw", context.packageName)
+                R.raw.correct_answer_beep
             } else {
-                context.resources.getIdentifier("wrong_answer_beep", "raw", context.packageName)
+                R.raw.wrong_answer_beep
             }
             
-            if (resId != 0) {
-                MediaPlayer.create(context, resId)?.apply {
-                    setOnCompletionListener { release() }
-                    start()
-                }
+            MediaPlayer.create(context, resId)?.apply {
+                setOnCompletionListener { release() }
+                start()
             }
         }
     }
@@ -86,75 +89,145 @@ fun GameScreen(
     // rememberAssetImage (from helper/utilis.kt) loads the PNG/JPG out of
     // app/src/main/assets/ using currentPuzzle.imagePath.
     val imageBitmap = puzzle?.let { rememberAssetImage(it.imagePath) }
+    
+    val configuration = LocalConfiguration.current
+    val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+    val scrollState = rememberScrollState()
 
     Column(
         modifier = modifier
             .fillMaxSize()
+            .verticalScroll(scrollState)
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Spacer(Modifier.weight(0.5f))
+        if (isLandscape) {
+            // Landscape Layout: Split into two columns
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                // Left Column: Image
+                Column(
+                    modifier = Modifier.weight(1f),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    if (imageBitmap != null) {
+                        Image(
+                            bitmap = imageBitmap,
+                            contentDescription = stringResource(R.string.app_name),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(250.dp)
+                        )
+                    } else {
+                        Text(
+                            text = stringResource(R.string.game_error_image),
+                            color = MaterialTheme.colorScheme.error
+                        )
+                    }
+                }
 
-        // Status row: Score / Puzzle X of 3 / elapsed time.
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Text(stringResource(R.string.game_score, gameViewModel.score, gameViewModel.maxScore))
-            Text(stringResource(R.string.game_puzzle_index, gameViewModel.currentIndex + 1, gameViewModel.puzzles.size))
-            Text(stringResource(R.string.game_duration, gameViewModel.elapsedSeconds))
-        }
+                // Right Column: Controls
+                Column(
+                    modifier = Modifier.weight(1f),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    // Status row
+                    Column(modifier = Modifier.fillMaxWidth()) {
+                        Text(stringResource(R.string.game_score, gameViewModel.score, gameViewModel.maxScore))
+                        Text(stringResource(R.string.game_puzzle_index, gameViewModel.currentIndex + 1, gameViewModel.puzzles.size))
+                        Text(stringResource(R.string.game_duration, gameViewModel.elapsedSeconds))
+                    }
 
-        Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(16.dp))
 
-        // Falls back to an error message instead of crashing if the
-        // asset failed to decode (e.g. a bad file path).
-        if (imageBitmap != null) {
-            Image(
-                bitmap = imageBitmap,
-                contentDescription = stringResource(R.string.app_name),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(300.dp)
-            )
+                    OutlinedTextField(
+                        value = gameViewModel.answerInput,
+                        onValueChange = { gameViewModel.answerInput = it },
+                        label = { Text(stringResource(R.string.game_enter_answer)) },
+                        singleLine = true,
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                        modifier = Modifier.fillMaxWidth()
+                    )
+
+                    Button(
+                        onClick = { gameViewModel.checkAnswer() },
+                        enabled = gameViewModel.answerInput.isNotBlank(),
+                        modifier = Modifier.padding(top = 8.dp).fillMaxWidth()
+                    ) { Text(stringResource(R.string.game_check)) }
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Text(stringResource(R.string.game_user, username))
+                        Text(stringResource(R.string.game_level, level))
+                    }
+                }
+            }
         } else {
-            Text(
-                text = stringResource(R.string.game_error_image),
-                color = MaterialTheme.colorScheme.error
+            // Portrait Layout: Original sequential layout
+            Spacer(Modifier.weight(0.5f))
+
+            // Status row: Score / Puzzle X of 3 / elapsed time.
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(stringResource(R.string.game_score, gameViewModel.score, gameViewModel.maxScore))
+                Text(stringResource(R.string.game_puzzle_index, gameViewModel.currentIndex + 1, gameViewModel.puzzles.size))
+                Text(stringResource(R.string.game_duration, gameViewModel.elapsedSeconds))
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            if (imageBitmap != null) {
+                Image(
+                    bitmap = imageBitmap,
+                    contentDescription = stringResource(R.string.app_name),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(300.dp)
+                )
+            } else {
+                Text(
+                    text = stringResource(R.string.game_error_image),
+                    color = MaterialTheme.colorScheme.error
+                )
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            OutlinedTextField(
+                value = gameViewModel.answerInput,
+                onValueChange = { gameViewModel.answerInput = it },
+                label = { Text(stringResource(R.string.game_enter_answer)) },
+                singleLine = true,
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                modifier = Modifier.fillMaxWidth()
             )
+
+            Button(
+                onClick = { gameViewModel.checkAnswer() },
+                enabled = gameViewModel.answerInput.isNotBlank(),
+                modifier = Modifier.padding(top = 8.dp)
+            ) { Text(stringResource(R.string.game_check)) }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(stringResource(R.string.game_user, username))
+                Text(stringResource(R.string.game_level, level))
+            }
+
+            Spacer(Modifier.weight(1f))
         }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        // Numeric keyboard only, since every puzzle answer is an integer.
-        OutlinedTextField(
-            value = gameViewModel.answerInput,
-            onValueChange = { gameViewModel.answerInput = it },
-            label = { Text(stringResource(R.string.game_enter_answer)) },
-            singleLine = true,
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        // Disabled until something is typed, so CHECK can't be tapped on
-        // an empty answer.
-        Button(
-            onClick = { gameViewModel.checkAnswer() },
-            enabled = gameViewModel.answerInput.isNotBlank(),
-            modifier = Modifier.padding(top = 8.dp)
-        ) { Text(stringResource(R.string.game_check)) }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Text(stringResource(R.string.game_user, username))
-            Text(stringResource(R.string.game_level, level))
-        }
-
-        Spacer(Modifier.weight(1f))
     }
 
     // Result popup shown after CHECK, mirroring the reference app's
