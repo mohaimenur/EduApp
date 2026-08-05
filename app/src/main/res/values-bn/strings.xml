@@ -27,6 +27,18 @@
     <string name="delete_confirmation_message">আপনি কি নিশ্চিত যে আপনি সমস্ত স্কোরের ইতিহাস মুছে ফেলতে চান? এই ক্রিয়াটি আর ফিরিয়ে আনা যাবে না।</string>
     <string name="confirm">মুছে ফেলুন</string>
     <string name="cancel">বাতিল</string>
+    <string name="edit_username">নাম পরিবর্তন করুন</string>
+    <string name="delete_item_confirmation">এই রেকর্ড মুছে ফেলবেন?</string>
+    <string name="update">আপডেট</string>
+    <string name="delete">মুছে ফেলুন</string>
+    <string name="actions">অ্যাকশন</string>
+
+    <!-- Validation -->
+    <string name="error_username_empty">নাম খালি হতে পারে না</string>
+    <string name="error_username_too_long">খুব দীর্ঘ (সর্বোচ্চ ১৫)</string>
+    <string name="error_username_invalid">শুধুমাত্র অক্ষর/সংখ্যা</string>
+    <string name="error_answer_invalid">শুধুমাত্র সংখ্যা</string>
+    <string name="error_answer_too_long">খুব দীর্ঘ</string>
 
     <!-- Game Screen -->
     <string name="game_score">স্কোর: %1$d (/%2$d)</string>

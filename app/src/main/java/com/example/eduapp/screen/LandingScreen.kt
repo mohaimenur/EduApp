@@ -45,7 +45,7 @@ fun LandingScreen(
     navController: NavHostController,
     username: String,
     onUsernameChange: (String) -> Unit,
-    currentLanguage: String,
+    currentLanguage: String, // Kept to satisfy interface if needed, can be cleaned if AppNav allows
     onLanguageChange: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -54,9 +54,22 @@ fun LandingScreen(
     val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
     val scrollState = rememberScrollState()
 
+    // Validation logic
+    val isUserNameEmpty = username.isBlank()
+    val isUserNameTooLong = username.length > 15
+    val hasInvalidChars = username.any { !it.isLetterOrDigit() && it != ' ' }
+    val isUsernameInvalid = isUserNameEmpty || isUserNameTooLong || hasInvalidChars
+
+    val errorMessage = when {
+        isUserNameTooLong -> stringResource(R.string.error_username_too_long)
+        hasInvalidChars -> stringResource(R.string.error_username_invalid)
+        isUserNameEmpty && username.isNotEmpty() -> stringResource(R.string.error_username_empty)
+        else -> null
+    }
+
     Box(modifier = modifier.fillMaxSize()) {
         if (isLandscape) {
-            // Landscape Layout: Side-by-side to fit one page
+            // Landscape Layout: Side-by-side
             Row(
                 modifier = Modifier
                     .fillMaxSize()
@@ -88,15 +101,17 @@ fun LandingScreen(
                 ) {
                     OutlinedTextField(
                         value = username,
-                        onValueChange = onUsernameChange,
+                        onValueChange = { if (it.length <= 20) onUsernameChange(it) },
                         label = { Text(stringResource(R.string.enter_username)) },
                         singleLine = true,
+                        isError = errorMessage != null,
+                        supportingText = { errorMessage?.let { Text(it) } },
                         modifier = Modifier.fillMaxWidth()
                     )
 
                     Button(
                         onClick = { navController.navigate("setting") },
-                        enabled = username.isNotBlank(),
+                        enabled = !isUsernameInvalid,
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(top = 16.dp)
@@ -112,7 +127,7 @@ fun LandingScreen(
                     .padding(16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Spacer(Modifier.height(60.dp)) // Increased spacer for top to avoid button overlap
+                Spacer(Modifier.height(60.dp))
 
                 Image(
                     painter = painterResource(id = R.mipmap.ic_launcher_foreground),
@@ -130,15 +145,17 @@ fun LandingScreen(
 
                 OutlinedTextField(
                     value = username,
-                    onValueChange = onUsernameChange,
+                    onValueChange = { if (it.length <= 20) onUsernameChange(it) },
                     label = { Text(stringResource(R.string.enter_username)) },
                     singleLine = true,
+                    isError = errorMessage != null,
+                    supportingText = { errorMessage?.let { Text(it) } },
                     modifier = Modifier.fillMaxWidth()
                 )
 
                 Button(
                     onClick = { navController.navigate("setting") },
-                    enabled = username.isNotBlank(),
+                    enabled = !isUsernameInvalid,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 16.dp)
@@ -148,11 +165,11 @@ fun LandingScreen(
             }
         }
 
-        // Language Button - placed at the end so it's on top of all other content
+        // Language Button
         Box(
             modifier = Modifier
                 .align(Alignment.TopEnd)
-                .padding(8.dp) // Adjusted padding
+                .padding(8.dp)
         ) {
             IconButton(onClick = { langExpanded = true }) {
                 Icon(

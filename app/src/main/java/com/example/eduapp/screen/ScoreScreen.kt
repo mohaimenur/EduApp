@@ -1,45 +1,28 @@
 package com.example.eduapp.screen
 
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.RowScope
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import com.example.eduapp.R
+import com.example.eduapp.database.User
 import com.example.eduapp.viewmodel.AppViewModel
 import java.text.SimpleDateFormat
-import java.util.Date
 import java.util.Locale
 
 private val dateFormat = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.ENGLISH)
@@ -52,7 +35,9 @@ fun ScoreScreen(
 ) {
     val users by appViewModel.users.collectAsStateWithLifecycle(initialValue = emptyList())
     val scrollState = rememberScrollState()
-    var showDeleteDialog by remember { mutableStateOf(false) }
+    var showDeleteAllDialog by remember { mutableStateOf(false) }
+    var userToEdit by remember { mutableStateOf<User?>(null) }
+    var userToDelete by remember { mutableStateOf<User?>(null) }
 
     Column(
         modifier = modifier
@@ -61,7 +46,6 @@ fun ScoreScreen(
             .verticalScroll(scrollState),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // Reduced top spacer so it doesn't push the table off screen
         Spacer(Modifier.height(20.dp))
 
         Text(
@@ -84,15 +68,15 @@ fun ScoreScreen(
                     .height(IntrinsicSize.Min)
                     .border(0.5.dp, Color.Gray)
             ) {
-                TableCell(text = stringResource(R.string.table_name), weight = 2.2f, isHeader = true)
+                TableCell(text = stringResource(R.string.table_name), weight = 1.8f, isHeader = true)
                 VerticalDivider()
-                TableCell(text = stringResource(R.string.table_lvl), weight = 0.8f, isHeader = true)
+                TableCell(text = stringResource(R.string.table_lvl), weight = 0.7f, isHeader = true)
                 VerticalDivider()
-                TableCell(text = stringResource(R.string.table_score), weight = 1.5f, isHeader = true)
+                TableCell(text = stringResource(R.string.table_score), weight = 1.2f, isHeader = true)
                 VerticalDivider()
-                TableCell(text = stringResource(R.string.table_time), weight = 1.2f, isHeader = true)
+                TableCell(text = stringResource(R.string.table_time), weight = 1.0f, isHeader = true)
                 VerticalDivider()
-                TableCell(text = stringResource(R.string.table_date), weight = 2.5f, isHeader = true)
+                TableCell(text = stringResource(R.string.actions), weight = 1.8f, isHeader = true)
             }
 
             // Data rows
@@ -101,20 +85,34 @@ fun ScoreScreen(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(IntrinsicSize.Min)
+                        .height(IntrinsicSize.Min),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    TableCell(text = user.username, weight = 2.2f)
+                    TableCell(text = user.username, weight = 1.8f)
                     VerticalDivider()
-                    TableCell(text = user.level, weight = 0.8f)
+                    TableCell(text = user.level, weight = 0.7f)
                     VerticalDivider()
-                    TableCell(text = String.format(Locale.ENGLISH, "%d", user.score), weight = 1.5f)
+                    TableCell(text = String.format(Locale.ENGLISH, "%d", user.score), weight = 1.2f)
                     VerticalDivider()
                     TableCell(
                         text = String.format(Locale.ENGLISH, "%d:%02d", user.duration / 60, user.duration % 60),
-                        weight = 1.2f
+                        weight = 1.0f
                     )
                     VerticalDivider()
-                    TableCell(text = dateFormat.format(Date(user.date)), weight = 2.5f)
+                    
+                    // Action Icons
+                    Row(
+                        modifier = Modifier.weight(1.8f),
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        IconButton(onClick = { userToEdit = user }, modifier = Modifier.size(32.dp)) {
+                            Icon(Icons.Default.Edit, contentDescription = "Edit", tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(18.dp))
+                        }
+                        IconButton(onClick = { userToDelete = user }, modifier = Modifier.size(32.dp)) {
+                            Icon(Icons.Default.Delete, contentDescription = "Delete", tint = Color.Red, modifier = Modifier.size(18.dp))
+                        }
+                    }
                 }
             }
         }
@@ -135,7 +133,7 @@ fun ScoreScreen(
 
             if (users.isNotEmpty()) {
                 Button(
-                    onClick = { showDeleteDialog = true },
+                    onClick = { showDeleteAllDialog = true },
                     colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
                 ) {
                     Text(stringResource(R.string.clear_history))
@@ -144,23 +142,73 @@ fun ScoreScreen(
         }
     }
 
-    if (showDeleteDialog) {
+    // Individual Edit Dialog
+    userToEdit?.let { user ->
+        var newName by remember { mutableStateOf(user.username) }
         AlertDialog(
-            onDismissRequest = { showDeleteDialog = false },
+            onDismissRequest = { userToEdit = null },
+            title = { Text(stringResource(R.string.edit_username)) },
+            text = {
+                OutlinedTextField(
+                    value = newName,
+                    onValueChange = { if (it.length <= 15) newName = it },
+                    singleLine = true
+                )
+            },
+            confirmButton = {
+                TextButton(onClick = {
+                    appViewModel.updateUser(user.copy(username = newName))
+                    userToEdit = null
+                }) {
+                    Text(stringResource(R.string.update))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { userToEdit = null }) {
+                    Text(stringResource(R.string.cancel))
+                }
+            }
+        )
+    }
+
+    // Individual Delete Dialog
+    userToDelete?.let { user ->
+        AlertDialog(
+            onDismissRequest = { userToDelete = null },
+            title = { Text(stringResource(R.string.delete)) },
+            text = { Text(stringResource(R.string.delete_item_confirmation)) },
+            confirmButton = {
+                TextButton(onClick = {
+                    appViewModel.deleteUser(user)
+                    userToDelete = null
+                }) {
+                    Text(stringResource(R.string.delete))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { userToDelete = null }) {
+                    Text(stringResource(R.string.cancel))
+                }
+            }
+        )
+    }
+
+    // Delete All Confirmation
+    if (showDeleteAllDialog) {
+        AlertDialog(
+            onDismissRequest = { showDeleteAllDialog = false },
             title = { Text(stringResource(R.string.delete_confirmation_title)) },
             text = { Text(stringResource(R.string.delete_confirmation_message)) },
             confirmButton = {
-                TextButton(
-                    onClick = {
-                        appViewModel.clearUsers()
-                        showDeleteDialog = false
-                    }
-                ) {
+                TextButton(onClick = {
+                    appViewModel.clearUsers()
+                    showDeleteAllDialog = false
+                }) {
                     Text(stringResource(R.string.confirm))
                 }
             },
             dismissButton = {
-                TextButton(onClick = { showDeleteDialog = false }) {
+                TextButton(onClick = { showDeleteAllDialog = false }) {
                     Text(stringResource(R.string.cancel))
                 }
             }
@@ -191,6 +239,7 @@ fun RowScope.TableCell(
             .padding(4.dp),
         fontWeight = if (isHeader) FontWeight.Bold else FontWeight.Normal,
         textAlign = TextAlign.Center,
-        maxLines = 1
+        maxLines = 1,
+        fontSize = 13.sp
     )
 }

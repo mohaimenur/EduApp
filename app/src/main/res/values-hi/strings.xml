@@ -27,6 +27,18 @@
     <string name="delete_confirmation_message">क्या आप वाकई सभी स्कोर इतिहास मिटाना चाहते हैं? यह क्रिया पूर्ववत नहीं की जा सकती।</string>
     <string name="confirm">मिटाएं</string>
     <string name="cancel">रद्द करें</string>
+    <string name="edit_username">नाम बदलें</string>
+    <string name="delete_item_confirmation">इस रिकॉर्ड को मिटाएं?</string>
+    <string name="update">अपडेट</string>
+    <string name="delete">मिटाएं</string>
+    <string name="actions">एक्शन</string>
+
+    <!-- Validation -->
+    <string name="error_username_empty">नाम खाली नहीं हो सकता</string>
+    <string name="error_username_too_long">बहुत लंबा (अधिकतम 15)</string>
+    <string name="error_username_invalid">केवल अक्षर/अंक</string>
+    <string name="error_answer_invalid">केवल अंक</string>
+    <string name="error_answer_too_long">बहुत लंबा</string>
 
     <!-- Game Screen -->
     <string name="game_score">स्कोर: %1$d (/%2$d)</string>

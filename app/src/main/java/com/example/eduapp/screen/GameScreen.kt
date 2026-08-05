@@ -4,23 +4,11 @@ import android.content.Context
 import android.content.res.Configuration
 import android.media.MediaPlayer
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
@@ -79,6 +67,19 @@ fun GameScreen(
     val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
     val scrollState = rememberScrollState()
 
+    // Validation logic for answer
+    val answerInput = gameViewModel.answerInput
+    val isAnswerEmpty = answerInput.isBlank()
+    val isAnswerTooLong = answerInput.length > 6
+    val isAnswerInvalidFormat = answerInput.any { !it.isDigit() }
+    val isAnswerInvalid = isAnswerEmpty || isAnswerTooLong || isAnswerInvalidFormat
+
+    val answerErrorMessage = when {
+        isAnswerTooLong -> stringResource(R.string.error_answer_too_long)
+        isAnswerInvalidFormat -> stringResource(R.string.error_answer_invalid)
+        else -> null
+    }
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -125,17 +126,19 @@ fun GameScreen(
                     Spacer(modifier = Modifier.height(16.dp))
 
                     OutlinedTextField(
-                        value = gameViewModel.answerInput,
-                        onValueChange = { gameViewModel.answerInput = it },
+                        value = answerInput,
+                        onValueChange = { if (it.length <= 8) gameViewModel.answerInput = it },
                         label = { Text(stringResource(R.string.game_enter_answer)) },
                         singleLine = true,
+                        isError = answerErrorMessage != null,
+                        supportingText = { answerErrorMessage?.let { Text(it) } },
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                         modifier = Modifier.fillMaxWidth()
                     )
 
                     Button(
                         onClick = { gameViewModel.checkAnswer() },
-                        enabled = gameViewModel.answerInput.isNotBlank(),
+                        enabled = !isAnswerInvalid,
                         modifier = Modifier.padding(top = 8.dp).fillMaxWidth()
                     ) { Text(stringResource(R.string.game_check)) }
 
@@ -183,17 +186,19 @@ fun GameScreen(
             Spacer(modifier = Modifier.height(16.dp))
 
             OutlinedTextField(
-                value = gameViewModel.answerInput,
-                onValueChange = { gameViewModel.answerInput = it },
+                value = answerInput,
+                onValueChange = { if (it.length <= 8) gameViewModel.answerInput = it },
                 label = { Text(stringResource(R.string.game_enter_answer)) },
                 singleLine = true,
+                isError = answerErrorMessage != null,
+                supportingText = { answerErrorMessage?.let { Text(it) } },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 modifier = Modifier.fillMaxWidth()
             )
 
             Button(
                 onClick = { gameViewModel.checkAnswer() },
-                enabled = gameViewModel.answerInput.isNotBlank(),
+                enabled = !isAnswerInvalid,
                 modifier = Modifier.padding(top = 8.dp)
             ) { Text(stringResource(R.string.game_check)) }
 

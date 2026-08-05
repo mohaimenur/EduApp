@@ -27,6 +27,18 @@
     <string name="delete_confirmation_message">Are you sure you want to delete all score history? This action cannot be undone.</string>
     <string name="confirm">Clear</string>
     <string name="cancel">Cancel</string>
+    <string name="edit_username">Edit Username</string>
+    <string name="delete_item_confirmation">Delete this record?</string>
+    <string name="update">Update</string>
+    <string name="delete">Delete</string>
+    <string name="actions">Actions</string>
+
+    <!-- Validation -->
+    <string name="error_username_empty">Name cannot be empty</string>
+    <string name="error_username_too_long">Too long (max 15)</string>
+    <string name="error_username_invalid">Letters/numbers only</string>
+    <string name="error_answer_invalid">Numbers only</string>
+    <string name="error_answer_too_long">Too long</string>
 
     <!-- Game Screen -->
     <string name="game_score">Score: %1$d (/%2$d)</string>
