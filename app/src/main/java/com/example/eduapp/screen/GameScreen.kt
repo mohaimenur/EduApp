@@ -170,7 +170,7 @@ fun GameScreen(
             }
         } else {
             // Portrait Layout: Original sequential layout
-            Spacer(Modifier.weight(0.5f))
+            Spacer(Modifier.height(20.dp))
 
             // Status row: Score / Puzzle X of 3 / elapsed time.
             Row(
@@ -226,7 +226,7 @@ fun GameScreen(
                 Text(stringResource(R.string.game_level, level))
             }
 
-            Spacer(Modifier.weight(1f))
+            Spacer(Modifier.height(40.dp))
         }
     }
 

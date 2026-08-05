@@ -61,7 +61,7 @@ fun SettingScreen(
             .verticalScroll(scrollState)
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = if (isLandscape) Arrangement.Center else Arrangement.Top
+        verticalArrangement = Arrangement.Center // Content will be centered vertically
     ) {
         if (!isLandscape) {
             Spacer(Modifier.height(40.dp))
@@ -69,14 +69,18 @@ fun SettingScreen(
 
         Text(
             text = stringResource(R.string.select_level),
-            modifier = Modifier.fillMaxWidth(),
-            textAlign = TextAlign.Center,
+            modifier = Modifier
+                .fillMaxWidth(if (isLandscape) 0.8f else 1f)
+                .padding(horizontal = if (isLandscape) 16.dp else 0.dp),
+            textAlign = if (isLandscape) TextAlign.Start else TextAlign.Center,
             style = MaterialTheme.typography.titleMedium
         )
 
         if (isLandscape) {
             Row(
-                modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
+                modifier = Modifier
+                    .fillMaxWidth(0.8f) // Don't take full width in landscape to keep it centered and tidy
+                    .padding(top = 16.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {

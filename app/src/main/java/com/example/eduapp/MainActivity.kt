@@ -7,6 +7,9 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.List
@@ -27,7 +30,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -52,47 +57,38 @@ import com.example.eduapp.viewmodel.GameViewModelFactory
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        // applicationContext (not the Activity itself) so the Room DB
-        // instance below doesn't leak the Activity if it's ever held onto
-        // longer than the Activity lives.
+        // enableEdgeToEdge()
         val currentContext = applicationContext
         setContent {
-            EduAppTheme(dynamicColor = false) {
+            androidx.compose.material3.MaterialTheme {
                 AppNav(currentContext)
             }
         }
     }
 }
 
-// Hosts the nav graph and everything screens need to share between routes:
-// the Room database, the two ViewModels, and the username/level picked on
-// earlier screens (plain remembered state, since only Landing/Setting write
-// to it and everything else just reads it).
 @Composable
-fun AppNav(currentContext: Context) {
+fun AppNav(applicationContext: Context) {
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
 
-    // Built once per app launch and shared by every screen that touches the
-    // database (Game writes results, Score reads them).
     val db = remember {
-        Room.databaseBuilder(currentContext, AppDatabase::class.java, "app_db").build()
+        Room.databaseBuilder(applicationContext, AppDatabase::class.java, "app_db").build()
     }
     val appViewModel: AppViewModel = viewModel(factory = AppViewModelFactory(db.appDao()))
     val gameViewModel: GameViewModel = viewModel(factory = GameViewModelFactory(db.appDao()))
 
-    // Carried from Landing -> Setting -> Game. Kept here (not inside a
-    // screen) because both Landing and Setting need to write to it, and Game
-    // needs to read the final values after both have run.
     var username by rememberSaveable { mutableStateOf("") }
     var selectedLevel by rememberSaveable { mutableStateOf("1") }
     var language by rememberSaveable { mutableStateOf("en") }
 
-    val context = LocaleHelper.setLocale(LocalContext.current, language)
+    val activityContext = LocalContext.current
+    val localizedContext = remember(language) {
+        LocaleHelper.setLocale(activityContext, language)
+    }
 
-    CompositionLocalProvider(LocalContext provides context) {
+    CompositionLocalProvider(LocalContext provides localizedContext) {
         val title = when (currentRoute) {
             "landing" -> ""
             "setting" -> stringResource(R.string.settings)
@@ -101,7 +97,7 @@ fun AppNav(currentContext: Context) {
             else -> ""
         }
         Scaffold(
-            containerColor = MaterialTheme.colorScheme.background,
+            containerColor = Color.White, // Force white to see if it renders
             topBar = { TopAppBar(title = { Text(title) }) },
             bottomBar = {
                 if (currentRoute != "game") {
@@ -153,7 +149,7 @@ fun AppNav(currentContext: Context) {
                 }
                 composable("game") {
                     GameScreen(
-                        currentContext = context,
+                        currentContext = localizedContext,
                         navController = navController,
                         gameViewModel = gameViewModel,
                         username = username,
@@ -165,12 +161,5 @@ fun AppNav(currentContext: Context) {
                 }
             }
         }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    EduAppTheme {
     }
 }

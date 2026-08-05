@@ -27,7 +27,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -57,60 +56,12 @@ fun LandingScreen(
     val scrollState = rememberScrollState()
 
     Box(modifier = modifier.fillMaxSize()) {
-        // Language Button in Top-Right Corner
-        Box(
-            modifier = Modifier
-                .align(Alignment.TopEnd)
-                .padding(16.dp)
-        ) {
-            IconButton(onClick = { langExpanded = true }) {
-                Icon(
-                    imageVector = Icons.Default.Language,
-                    contentDescription = stringResource(R.string.select_language),
-                    tint = MaterialTheme.colorScheme.primary
-                )
-            }
-            DropdownMenu(
-                expanded = langExpanded,
-                onDismissRequest = { langExpanded = false }
-            ) {
-                DropdownMenuItem(
-                    text = { Text("English") },
-                    onClick = {
-                        onLanguageChange("en")
-                        langExpanded = false
-                    }
-                )
-                DropdownMenuItem(
-                    text = { Text("中文") },
-                    onClick = {
-                        onLanguageChange("zh")
-                        langExpanded = false
-                    }
-                )
-                DropdownMenuItem(
-                    text = { Text("বাংলা") },
-                    onClick = {
-                        onLanguageChange("bn")
-                        langExpanded = false
-                    }
-                )
-                DropdownMenuItem(
-                    text = { Text("हिन्दी") },
-                    onClick = {
-                        onLanguageChange("hi")
-                        langExpanded = false
-                    }
-                )
-            }
-        }
-
         if (isLandscape) {
             // Landscape Layout: Side-by-side to fit one page
             Row(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(horizontal = 48.dp, vertical = 16.dp),
+                    .padding(start = 48.dp, end = 64.dp, top = 16.dp, bottom = 16.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(32.dp)
             ) {
@@ -162,7 +113,7 @@ fun LandingScreen(
                     .padding(16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Spacer(Modifier.height(40.dp)) // Fixed spacer for top
+                Spacer(Modifier.height(60.dp)) // Increased spacer for top to avoid button overlap
 
                 Image(
                     painter = painterResource(id = R.mipmap.ic_launcher_foreground),
@@ -195,6 +146,54 @@ fun LandingScreen(
                 ) { Text(stringResource(R.string.play)) }
 
                 Spacer(Modifier.height(40.dp))
+            }
+        }
+
+        // Language Button - placed at the end so it's on top of all other content
+        Box(
+            modifier = Modifier
+                .align(Alignment.TopEnd)
+                .padding(8.dp) // Adjusted padding
+        ) {
+            IconButton(onClick = { langExpanded = true }) {
+                Icon(
+                    imageVector = Icons.Default.Language,
+                    contentDescription = stringResource(R.string.select_language),
+                    tint = MaterialTheme.colorScheme.primary
+                )
+            }
+            DropdownMenu(
+                expanded = langExpanded,
+                onDismissRequest = { langExpanded = false }
+            ) {
+                DropdownMenuItem(
+                    text = { Text("English") },
+                    onClick = {
+                        onLanguageChange("en")
+                        langExpanded = false
+                    }
+                )
+                DropdownMenuItem(
+                    text = { Text("中文") },
+                    onClick = {
+                        onLanguageChange("zh")
+                        langExpanded = false
+                    }
+                )
+                DropdownMenuItem(
+                    text = { Text("বাংলা") },
+                    onClick = {
+                        onLanguageChange("bn")
+                        langExpanded = false
+                    }
+                )
+                DropdownMenuItem(
+                    text = { Text("हिन्दी") },
+                    onClick = {
+                        onLanguageChange("hi")
+                        langExpanded = false
+                    }
+                )
             }
         }
     }
