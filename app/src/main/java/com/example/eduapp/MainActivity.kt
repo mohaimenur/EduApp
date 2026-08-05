@@ -7,9 +7,6 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.List
@@ -30,9 +27,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -57,10 +52,10 @@ import com.example.eduapp.viewmodel.GameViewModelFactory
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // enableEdgeToEdge()
+        enableEdgeToEdge()
         val currentContext = applicationContext
         setContent {
-            androidx.compose.material3.MaterialTheme {
+            EduAppTheme(dynamicColor = false) {
                 AppNav(currentContext)
             }
         }
@@ -97,7 +92,7 @@ fun AppNav(applicationContext: Context) {
             else -> ""
         }
         Scaffold(
-            containerColor = Color.White, // Force white to see if it renders
+            containerColor = MaterialTheme.colorScheme.background,
             topBar = { TopAppBar(title = { Text(title) }) },
             bottomBar = {
                 if (currentRoute != "game") {
@@ -161,5 +156,12 @@ fun AppNav(applicationContext: Context) {
                 }
             }
         }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun GreetingPreview() {
+    EduAppTheme {
     }
 }
