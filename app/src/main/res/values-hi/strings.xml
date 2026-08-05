@@ -22,6 +22,11 @@
     <string name="table_time">समय</string>
     <string name="table_date">दिनांक</string>
     <string name="play_again">फिर से खेलें</string>
+    <string name="clear_history">इतिहास मिटाएं</string>
+    <string name="delete_confirmation_title">इतिहास मिटाएं?</string>
+    <string name="delete_confirmation_message">क्या आप वाकई सभी स्कोर इतिहास मिटाना चाहते हैं? यह क्रिया पूर्ववत नहीं की जा सकती।</string>
+    <string name="confirm">मिटाएं</string>
+    <string name="cancel">रद्द करें</string>
 
     <!-- Game Screen -->
     <string name="game_score">स्कोर: %1$d (/%2$d)</string>

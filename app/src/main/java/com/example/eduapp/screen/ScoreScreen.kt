@@ -1,6 +1,7 @@
 package com.example.eduapp.screen
 
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
@@ -14,12 +15,18 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -45,6 +52,7 @@ fun ScoreScreen(
 ) {
     val users by appViewModel.users.collectAsStateWithLifecycle(initialValue = emptyList())
     val scrollState = rememberScrollState()
+    var showDeleteDialog by remember { mutableStateOf(false) }
 
     Column(
         modifier = modifier
@@ -111,16 +119,52 @@ fun ScoreScreen(
             }
         }
 
-        Button(
-            onClick = {
-                navController.navigate("setting") {
-                    popUpTo("landing") { inclusive = false }
+        Row(
+            modifier = Modifier.padding(top = 24.dp, bottom = 40.dp),
+            horizontalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            Button(
+                onClick = {
+                    navController.navigate("setting") {
+                        popUpTo("landing") { inclusive = false }
+                    }
+                }
+            ) {
+                Text(stringResource(R.string.play_again))
+            }
+
+            if (users.isNotEmpty()) {
+                Button(
+                    onClick = { showDeleteDialog = true },
+                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
+                ) {
+                    Text(stringResource(R.string.clear_history))
+                }
+            }
+        }
+    }
+
+    if (showDeleteDialog) {
+        AlertDialog(
+            onDismissRequest = { showDeleteDialog = false },
+            title = { Text(stringResource(R.string.delete_confirmation_title)) },
+            text = { Text(stringResource(R.string.delete_confirmation_message)) },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        appViewModel.clearUsers()
+                        showDeleteDialog = false
+                    }
+                ) {
+                    Text(stringResource(R.string.confirm))
                 }
             },
-            modifier = Modifier.padding(top = 24.dp, bottom = 40.dp)
-        ) {
-            Text(stringResource(R.string.play_again))
-        }
+            dismissButton = {
+                TextButton(onClick = { showDeleteDialog = false }) {
+                    Text(stringResource(R.string.cancel))
+                }
+            }
+        )
     }
 }
 

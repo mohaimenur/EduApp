@@ -22,6 +22,11 @@
     <string name="table_time">সময়</string>
     <string name="table_date">তারিখ</string>
     <string name="play_again">আবার খেলুন</string>
+    <string name="clear_history">ইতিহাস মুছে ফেলুন</string>
+    <string name="delete_confirmation_title">ইতিহাস মুছে ফেলবেন?</string>
+    <string name="delete_confirmation_message">আপনি কি নিশ্চিত যে আপনি সমস্ত স্কোরের ইতিহাস মুছে ফেলতে চান? এই ক্রিয়াটি আর ফিরিয়ে আনা যাবে না।</string>
+    <string name="confirm">মুছে ফেলুন</string>
+    <string name="cancel">বাতিল</string>
 
     <!-- Game Screen -->
     <string name="game_score">স্কোর: %1$d (/%2$d)</string>
