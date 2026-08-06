@@ -14,7 +14,6 @@ import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
@@ -84,75 +83,76 @@ fun AppNav(applicationContext: Context) {
     }
 
     CompositionLocalProvider(LocalContext provides localizedContext) {
-        val title = when (currentRoute) {
-            "landing" -> ""
-            "setting" -> stringResource(R.string.settings)
-            "game" -> stringResource(R.string.game_screen_title)
-            "score" -> stringResource(R.string.score_list)
-            else -> ""
-        }
-        Scaffold(
-            containerColor = MaterialTheme.colorScheme.background,
-            topBar = { TopAppBar(title = { Text(title) }) },
-            bottomBar = {
-                if (currentRoute != "game") {
-                    NavigationBar {
-                        NavigationBarItem(
-                            selected = currentRoute == "landing",
-                            onClick = { navController.navigate("landing") {
-                                popUpTo("landing") { inclusive = true }
-                            } },
-                            icon = { Icon(Icons.Default.Home, contentDescription = "Home") },
-                            label = { Text(stringResource(R.string.home)) },
-                        )
-                        NavigationBarItem(
-                            selected = currentRoute == "setting",
-                            onClick = { navController.navigate("setting") },
-                            icon = { Icon(Icons.Default.Settings, contentDescription = "Settings") },
-                            label = { Text(stringResource(R.string.settings)) }
-                        )
-                        NavigationBarItem(
-                            selected = currentRoute == "score",
-                            onClick = { navController.navigate("score") },
-                            icon = { Icon(Icons.AutoMirrored.Filled.List, contentDescription = "Score") },
-                            label = { Text(stringResource(R.string.score)) }
-                        )
+        androidx.compose.runtime.key(language) {
+            val title = when (currentRoute) {
+                "landing" -> ""
+                "setting" -> stringResource(R.string.settings)
+                "game" -> stringResource(R.string.game_screen_title)
+                "score" -> stringResource(R.string.score_list)
+                else -> ""
+            }
+            Scaffold(
+                topBar = { TopAppBar(title = { Text(title) }) },
+                bottomBar = {
+                    if (currentRoute != "game") {
+                        NavigationBar {
+                            NavigationBarItem(
+                                selected = currentRoute == "landing",
+                                onClick = { navController.navigate("landing") {
+                                    popUpTo("landing") { inclusive = true }
+                                } },
+                                icon = { Icon(Icons.Default.Home, contentDescription = "Home") },
+                                label = { Text(stringResource(R.string.home)) },
+                            )
+                            NavigationBarItem(
+                                selected = currentRoute == "setting",
+                                onClick = { navController.navigate("setting") },
+                                icon = { Icon(Icons.Default.Settings, contentDescription = "Settings") },
+                                label = { Text(stringResource(R.string.settings)) }
+                            )
+                            NavigationBarItem(
+                                selected = currentRoute == "score",
+                                onClick = { navController.navigate("score") },
+                                icon = { Icon(Icons.AutoMirrored.Filled.List, contentDescription = "Score") },
+                                label = { Text(stringResource(R.string.score)) }
+                            )
+                        }
                     }
                 }
-            }
-        ) { innerPadding ->
-            NavHost(
-                navController = navController,
-                startDestination = "landing",
-                modifier = Modifier.padding(innerPadding)
-            ) {
-                composable("landing") {
-                    LandingScreen(
-                        navController = navController,
-                        username = username,
-                        onUsernameChange = { username = it },
-                        currentLanguage = language,
-                        onLanguageChange = { language = it }
-                    )
-                }
-                composable("setting") {
-                    SettingScreen(
-                        navController = navController,
-                        selectedLevel = selectedLevel,
-                        onLevelChange = { selectedLevel = it }
-                    )
-                }
-                composable("game") {
-                    GameScreen(
-                        currentContext = localizedContext,
-                        navController = navController,
-                        gameViewModel = gameViewModel,
-                        username = username,
-                        level = selectedLevel
-                    )
-                }
-                composable("score") {
-                    ScoreScreen(navController = navController, appViewModel = appViewModel)
+            ) { innerPadding ->
+                NavHost(
+                    navController = navController,
+                    startDestination = "landing",
+                    modifier = Modifier.padding(innerPadding)
+                ) {
+                    composable("landing") {
+                        LandingScreen(
+                            navController = navController,
+                            username = username,
+                            onUsernameChange = { username = it },
+                            currentLanguage = language,
+                            onLanguageChange = { language = it }
+                        )
+                    }
+                    composable("setting") {
+                        SettingScreen(
+                            navController = navController,
+                            selectedLevel = selectedLevel,
+                            onLevelChange = { selectedLevel = it }
+                        )
+                    }
+                    composable("game") {
+                        GameScreen(
+                            currentContext = localizedContext,
+                            navController = navController,
+                            gameViewModel = gameViewModel,
+                            username = username,
+                            level = selectedLevel
+                        )
+                    }
+                    composable("score") {
+                        ScoreScreen(navController = navController, appViewModel = appViewModel)
+                    }
                 }
             }
         }

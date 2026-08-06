@@ -9,10 +9,13 @@ object LocaleHelper {
         val locale = Locale.forLanguageTag(languageCode)
         Locale.setDefault(locale)
         
-        val config = Configuration(context.resources.configuration)
+        val resources = context.resources
+        val config = Configuration(resources.configuration)
         config.setLocale(locale)
         
-        // We ONLY use createConfigurationContext to avoid global state loops
+        // Update the existing resources to ensure all components see the change
+        resources.updateConfiguration(config, resources.displayMetrics)
+
         return context.createConfigurationContext(config)
     }
 }

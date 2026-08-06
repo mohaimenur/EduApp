@@ -1,6 +1,5 @@
 package com.example.eduapp.ui.theme
 
-import android.app.Activity
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
@@ -13,23 +12,21 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 
 private val DarkColorScheme = darkColorScheme(
-    primary = LogoGreen,
-    secondary = SkyBlue,
+    primary = Purple80,
+    secondary = PurpleGrey80,
     tertiary = Pink80,
-    background = DarkGreen,
-    surface = DarkGreen,
-    onPrimary = Color.Black,
+    background = DarkPurpleBackground,
+    surface = DarkPurpleBackground,
     onBackground = Color.White,
     onSurface = Color.White
 )
 
 private val LightColorScheme = lightColorScheme(
-    primary = LogoGreen,
-    secondary = SkyBlue,
+    primary = Purple40,
+    secondary = PurpleGrey40,
     tertiary = Pink40,
-    background = SoftGreen,
-    surface = SoftGreen,
-    onPrimary = Color.White,
+    background = LightPurpleBackground,
+    surface = LightPurpleBackground,
     onBackground = Color.Black,
     onSurface = Color.Black
 )
