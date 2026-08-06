@@ -48,12 +48,18 @@ import com.example.eduapp.viewmodel.AppViewModelFactory
 import com.example.eduapp.viewmodel.GameViewModel
 import com.example.eduapp.viewmodel.GameViewModelFactory
 
+/**
+ * Main Activity of the EduApp.
+ * This class serves as the entry point and sets up the root Jetpack Compose theme and navigation.
+ */
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        // Enables edge-to-edge support for modern Android look
         enableEdgeToEdge()
         val currentContext = applicationContext
         setContent {
+            // Applies the custom app theme with dynamic colors disabled for consistency
             EduAppTheme(dynamicColor = false) {
                 AppNav(currentContext)
             }
@@ -61,28 +67,39 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+/**
+ * Root navigation component of the application.
+ * Manages the database instance, ViewModels, shared state, and localized context.
+ */
 @Composable
 fun AppNav(applicationContext: Context) {
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
 
+    // Initializes the Room database once for the application session
     val db = remember {
         Room.databaseBuilder(applicationContext, AppDatabase::class.java, "app_db").build()
     }
+    
+    // ViewModel initialization with factories to inject the DAO
     val appViewModel: AppViewModel = viewModel(factory = AppViewModelFactory(db.appDao()))
     val gameViewModel: GameViewModel = viewModel(factory = GameViewModelFactory(db.appDao()))
 
+    // Shared state preserved across configuration changes (rotation)
     var username by rememberSaveable { mutableStateOf("") }
     var selectedLevel by rememberSaveable { mutableStateOf("1") }
     var language by rememberSaveable { mutableStateOf("en") }
 
+    // Dynamic language handling
     val activityContext = LocalContext.current
     val localizedContext = remember(language) {
         LocaleHelper.setLocale(activityContext, language)
     }
 
+    // Provides the localized context to all child components
     CompositionLocalProvider(LocalContext provides localizedContext) {
+        // key ensures the UI re-renders and re-reads resources when language changes
         androidx.compose.runtime.key(language) {
             val title = when (currentRoute) {
                 "landing" -> ""
@@ -94,6 +111,7 @@ fun AppNav(applicationContext: Context) {
             Scaffold(
                 topBar = { TopAppBar(title = { Text(title) }) },
                 bottomBar = {
+                    // Hides bottom navigation during active gameplay
                     if (currentRoute != "game") {
                         NavigationBar {
                             NavigationBarItem(
@@ -120,6 +138,7 @@ fun AppNav(applicationContext: Context) {
                     }
                 }
             ) { innerPadding ->
+                // Navigation Host defining the app's screen transitions
                 NavHost(
                     navController = navController,
                     startDestination = "landing",

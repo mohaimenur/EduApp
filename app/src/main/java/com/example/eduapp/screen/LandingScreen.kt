@@ -40,26 +40,36 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.eduapp.R
 
+/**
+ * The initial screen of the application.
+ * Captures the user's name and provides an entry point to the game settings.
+ */
 @Composable
 fun LandingScreen(
     navController: NavHostController,
     username: String,
     onUsernameChange: (String) -> Unit,
-    currentLanguage: String, // Kept to satisfy interface if needed, can be cleaned if AppNav allows
+    currentLanguage: String,
     onLanguageChange: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    // Controls the visibility of the language selection dropdown
     var langExpanded by rememberSaveable { mutableStateOf(false) }
+    
+    // UI adaptation based on screen orientation
     val configuration = LocalConfiguration.current
     val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
     val scrollState = rememberScrollState()
 
-    // Validation logic
+    // Real-time Input Validation logic
     val isUserNameEmpty = username.isBlank()
     val isUserNameTooLong = username.length > 15
     val hasInvalidChars = username.any { !it.isLetterOrDigit() && it != ' ' }
+    
+    // Aggregated state to enable/disable navigation
     val isUsernameInvalid = isUserNameEmpty || isUserNameTooLong || hasInvalidChars
 
+    // Localized error message calculation
     val errorMessage = when {
         isUserNameTooLong -> stringResource(R.string.error_username_too_long)
         hasInvalidChars -> stringResource(R.string.error_username_invalid)
@@ -69,7 +79,7 @@ fun LandingScreen(
 
     Box(modifier = modifier.fillMaxSize()) {
         if (isLandscape) {
-            // Landscape Layout: Side-by-side
+            // Landscape optimized layout: Logo on left, input on right
             Row(
                 modifier = Modifier
                     .fillMaxSize()
@@ -119,7 +129,7 @@ fun LandingScreen(
                 }
             }
         } else {
-            // Portrait Layout
+            // Portrait standard layout: Stacked vertically
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -165,7 +175,7 @@ fun LandingScreen(
             }
         }
 
-        // Language Button
+        // Floating Language Switcher in the top-right corner
         Box(
             modifier = Modifier
                 .align(Alignment.TopEnd)

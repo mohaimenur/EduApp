@@ -25,16 +25,24 @@ import com.example.eduapp.viewmodel.AppViewModel
 import java.text.SimpleDateFormat
 import java.util.Locale
 
+// Standardized date format for score records
 private val dateFormat = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.ENGLISH)
 
+/**
+ * Screen displaying the history of game scores stored in the Room database.
+ * Supports viewing, editing usernames, and deleting individual or all records.
+ */
 @Composable
 fun ScoreScreen(
     navController: NavHostController,
     appViewModel: AppViewModel,
     modifier: Modifier = Modifier
 ) {
+    // Observes the database flow as a Compose state
     val users by appViewModel.users.collectAsStateWithLifecycle(initialValue = emptyList())
     val scrollState = rememberScrollState()
+    
+    // States for managing various modal dialogs
     var showDeleteAllDialog by remember { mutableStateOf(false) }
     var userToEdit by remember { mutableStateOf<User?>(null) }
     var userToDelete by remember { mutableStateOf<User?>(null) }
@@ -55,13 +63,13 @@ fun ScoreScreen(
             modifier = Modifier.padding(bottom = 16.dp)
         )
 
-        // The Table Container
+        // Custom Table UI for displaying score records
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .border(1.dp, Color.Gray)
         ) {
-            // Header row
+            // Static Header Row
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -79,7 +87,7 @@ fun ScoreScreen(
                 TableCell(text = stringResource(R.string.actions), weight = 1.8f, isHeader = true)
             }
 
-            // Data rows
+            // Dynamic Data Rows
             users.forEach { user ->
                 HorizontalDivider(thickness = 0.5.dp, color = Color.Gray)
                 Row(
@@ -100,7 +108,7 @@ fun ScoreScreen(
                     )
                     VerticalDivider()
                     
-                    // Action Icons
+                    // Row-level Actions: Edit and Delete
                     Row(
                         modifier = Modifier.weight(1.8f),
                         horizontalArrangement = Arrangement.Center,
@@ -117,6 +125,7 @@ fun ScoreScreen(
             }
         }
 
+        // Navigation and Global Action Buttons
         Row(
             modifier = Modifier.padding(top = 24.dp, bottom = 40.dp),
             horizontalArrangement = Arrangement.spacedBy(16.dp)
@@ -131,6 +140,7 @@ fun ScoreScreen(
                 Text(stringResource(R.string.play_again))
             }
 
+            // Only show clear button if data exists
             if (users.isNotEmpty()) {
                 Button(
                     onClick = { showDeleteAllDialog = true },
@@ -142,7 +152,7 @@ fun ScoreScreen(
         }
     }
 
-    // Individual Edit Dialog
+    // Modal for editing an existing record's username
     userToEdit?.let { user ->
         var newName by remember { mutableStateOf(user.username) }
         AlertDialog(
@@ -171,7 +181,7 @@ fun ScoreScreen(
         )
     }
 
-    // Individual Delete Dialog
+    // Modal for confirming individual record deletion
     userToDelete?.let { user ->
         AlertDialog(
             onDismissRequest = { userToDelete = null },
@@ -193,7 +203,7 @@ fun ScoreScreen(
         )
     }
 
-    // Delete All Confirmation
+    // Modal for confirming total history wipe
     if (showDeleteAllDialog) {
         AlertDialog(
             onDismissRequest = { showDeleteAllDialog = false },
@@ -216,6 +226,9 @@ fun ScoreScreen(
     }
 }
 
+/**
+ * Decorative vertical divider for table columns.
+ */
 @Composable
 fun VerticalDivider() {
     Spacer(
@@ -226,6 +239,9 @@ fun VerticalDivider() {
     )
 }
 
+/**
+ * Individual cell component for the score table.
+ */
 @Composable
 fun RowScope.TableCell(
     text: String,

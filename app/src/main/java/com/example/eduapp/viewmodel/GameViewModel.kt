@@ -15,24 +15,23 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.collections.getOrNull
 
-// One correct answer = 10 points. 3 puzzles per round = 30 max, matching the
-// reference app's "Score: 0 (/30)" label.
+// Scoring constants matching reference requirements
 private const val POINTS_PER_PUZZLE = 10
 private const val PUZZLES_PER_SESSION = 3
 
-// Owns everything that happens during one play-through: which 3 puzzles were
-// picked, which one is showing now, the running score/timer, and the text the
-// player has typed. GameScreen just reads these as state and calls the
-// functions below - it holds no game logic itself.
+/**
+ * ViewModel responsible for managing a single game session.
+ * Encapsulates puzzle selection, scoring logic, timer management, and session persistence.
+ */
 class GameViewModel(private val dao: AppDao) : ViewModel() {
 
-    // "private set" means other classes (GameScreen) can read these but can't
-    // reassign them directly - they can only change via the functions below.
+    // Identity and difficulty parameters for the current session
     var username by mutableStateOf("")
         private set
     var level by mutableStateOf("1")
         private set
 
+    // Game state observables
     var puzzles by mutableStateOf<List<Puzzle>>(emptyList())
         private set
     var currentIndex by mutableIntStateOf(0)
@@ -42,41 +41,43 @@ class GameViewModel(private val dao: AppDao) : ViewModel() {
     var elapsedSeconds by mutableIntStateOf(0)
         private set
 
-    // These two ARE meant to be set directly from the UI:
-    // answerInput is two-way bound to the TextField, dialogMessage is read to
-    // decide whether the result AlertDialog is showing.
+    // UI-bound input and interaction states
     var answerInput by mutableStateOf("")
     var dialogResult by mutableStateOf<Pair<Boolean, Int>?>(null)
         private set
     var isLastAnswerCorrect by mutableStateOf(false)
         private set
 
-    // Flips to true once all 3 puzzles are done - GameScreen watches this and
-    // navigates to the Score screen when it changes.
+    // Lifecycle flag for navigation control
     var gameFinished by mutableStateOf(false)
         private set
 
-    // Handle to the coroutine that ticks elapsedSeconds every second, so we
-    // can cancel it when the round ends or the ViewModel is destroyed.
+    // Coroutine handle for the active timer
     private var timerJob: Job? = null
 
-    // The puzzle currently on screen, or null if puzzles hasn't loaded yet /
-    // the round is already finished.
+    /**
+     * Computed property for the current active puzzle object.
+     */
     val currentPuzzle: Puzzle?
         get() = puzzles.getOrNull(currentIndex)
 
+    /**
+     * Maximum possible score for the session.
+     */
     val maxScore = PUZZLES_PER_SESSION * POINTS_PER_PUZZLE
 
-    // Called once when GameScreen first appears (see GameScreen's
-    // LaunchedEffect). Resets all state and picks a fresh set of 3 puzzles.
+    /**
+     * Initializes a new game session.
+     * Includes logic to prevent accidental resets during configuration changes (rotation).
+     */
     fun startGame(username: String, level: String) {
-        // Prevent re-starting the same session on configuration changes (like rotation)
+        // Validation to prevent duplicate session initialization on rotation
         if (puzzles.isNotEmpty() && !gameFinished && this.username == username && this.level == level) {
             return
         }
         this.username = username
         this.level = level
-        puzzles = PuzzleBank.sessionFor(level)
+        puzzles = PuzzleBank.sessionFor(level) // Picks 3 random puzzles
         currentIndex = 0
         score = 0
         elapsedSeconds = 0
@@ -87,9 +88,9 @@ class GameViewModel(private val dao: AppDao) : ViewModel() {
         startTimer()
     }
 
-    // Simple 1-second-tick stopwatch. viewModelScope auto-cancels this if the
-    // ViewModel is ever cleared, but we also cancel it explicitly in
-    // finishGame() so it stops the moment the round ends.
+    /**
+     * Launches a background coroutine to increment the session timer every second.
+     */
     private fun startTimer() {
         timerJob?.cancel()
         timerJob = viewModelScope.launch {
@@ -100,14 +101,18 @@ class GameViewModel(private val dao: AppDao) : ViewModel() {
         }
     }
 
+    /**
+     * Safely halts the background timer.
+     */
     private fun stopTimer() {
         timerJob?.cancel()
         timerJob = null
     }
 
-    // Called when the player taps CHECK. Compares their typed answer to the
-    // current puzzle's answer and sets dialogMessage, which makes the result
-    // AlertDialog appear in GameScreen.
+    /**
+     * Logic to evaluate the user's submitted answer.
+     * Updates the score and triggers the result dialog UI.
+     */
     fun checkAnswer() {
         val puzzle = currentPuzzle ?: return
         val userAnswer = answerInput.trim().toIntOrNull()
@@ -117,11 +122,14 @@ class GameViewModel(private val dao: AppDao) : ViewModel() {
         if (correct) {
             score += POINTS_PER_PUZZLE
         }
+        // Exposes result and correct answer for dynamic feedback display
         dialogResult = correct to puzzle.answer
     }
 
-    // Called when the player taps "Ok" on the result dialog. Moves to the
-    // next puzzle, or ends the round if that was the last of the 3.
+    /**
+     * Advances the game state to the next puzzle or concludes the session.
+     * Triggered by user dismissal of the result dialog.
+     */
     fun dismissDialogAndAdvance() {
         dialogResult = null
         answerInput = ""
@@ -132,9 +140,9 @@ class GameViewModel(private val dao: AppDao) : ViewModel() {
         }
     }
 
-    // Stops the timer, marks the round finished, and saves the result to
-    // Room so it shows up on the Score screen. Runs on viewModelScope since
-    // dao.insert is a suspend function (database work off the main thread).
+    /**
+     * Finalizes the session by stopping the timer and persisting results to the Room DB.
+     */
     private fun finishGame() {
         stopTimer()
         gameFinished = true
@@ -150,8 +158,9 @@ class GameViewModel(private val dao: AppDao) : ViewModel() {
         }
     }
 
-    // Safety net: if the screen/ViewModel is destroyed mid-game (e.g. user
-    // backs out), make sure the timer coroutine doesn't keep running.
+    /**
+     * Cleanup hook to ensure background jobs are stopped when the screen is exited.
+     */
     override fun onCleared() {
         stopTimer()
     }

@@ -24,7 +24,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -37,12 +36,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
 import com.example.eduapp.R
 
-// The 3 difficulty levels correspond 1:1 with the "1"/"2"/"3" asset folders
-// and PuzzleBank.forLevel() - keep these in sync if a level is ever added.
+// Maps 1:1 with asset folders "1", "2", and "3"
 private val LEVELS = listOf("1", "2", "3")
 
-// Second screen: pick a difficulty level, then start the game. Mirrors the
-// reference app's level dropdown + GO button.
+/**
+ * Screen for selecting game difficulty level.
+ * Adapts its layout to be vertically centered and potentially side-by-side in landscape.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingScreen(
@@ -51,7 +51,9 @@ fun SettingScreen(
     onLevelChange: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    // Dropdown expanded state preserved during rotation
     var levelExpanded by rememberSaveable { mutableStateOf(false) }
+    
     val configuration = LocalConfiguration.current
     val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
     val scrollState = rememberScrollState()
@@ -62,12 +64,14 @@ fun SettingScreen(
             .verticalScroll(scrollState)
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center // Content will be centered vertically
+        verticalArrangement = Arrangement.Center
     ) {
+        // Layout padding adjustment for portrait mode
         if (!isLandscape) {
             Spacer(Modifier.height(40.dp))
         }
 
+        // Instruction label with dynamic alignment
         Text(
             text = stringResource(R.string.select_level),
             modifier = Modifier
@@ -78,9 +82,10 @@ fun SettingScreen(
         )
 
         if (isLandscape) {
+            // Horizontal row layout for efficient space usage in landscape
             Row(
                 modifier = Modifier
-                    .fillMaxWidth(0.8f) // Don't take full width in landscape to keep it centered and tidy
+                    .fillMaxWidth(0.8f)
                     .padding(top = 16.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(16.dp)
@@ -99,6 +104,7 @@ fun SettingScreen(
                 ) { Text(stringResource(R.string.go)) }
             }
         } else {
+            // Vertical stacked layout for portrait mode
             LevelDropdown(
                 expanded = levelExpanded,
                 onExpandedChange = { levelExpanded = it },
@@ -118,6 +124,10 @@ fun SettingScreen(
     }
 }
 
+/**
+ * Reusable dropdown component for selecting a difficulty level.
+ * Uses Material 3 ExposedDropdownMenuBox.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LevelDropdown(
@@ -126,7 +136,9 @@ fun LevelDropdown(
     selectedLevel: String,
     onLevelChange: (String) -> Unit
 ) {
+    // Explicitly using LocalContext for string retrieval ensures immediate translation updates
     val context = LocalContext.current
+
     ExposedDropdownMenuBox(
         expanded = expanded,
         onExpandedChange = onExpandedChange,

@@ -23,6 +23,10 @@ import com.example.eduapp.R
 import com.example.eduapp.helper.rememberAssetImage
 import com.example.eduapp.viewmodel.GameViewModel
 
+/**
+ * Main game execution screen.
+ * Displays randomized puzzles, handles user input validation, and plays sound effects.
+ */
 @Composable
 fun GameScreen(
     currentContext: Context,
@@ -32,10 +36,12 @@ fun GameScreen(
     level: String,
     modifier: Modifier = Modifier
 ) {
+    // Starts the game session with provided username and level
     LaunchedEffect(username, level) {
         gameViewModel.startGame(username, level)
     }
 
+    // Handles navigation to Score screen upon session completion
     LaunchedEffect(gameViewModel.gameFinished) {
         if (gameViewModel.gameFinished) {
             navController.navigate("score") {
@@ -44,6 +50,7 @@ fun GameScreen(
         }
     }
 
+    // Multimedia feedback for correct/incorrect answers
     val context = LocalContext.current
     LaunchedEffect(gameViewModel.dialogResult) {
         gameViewModel.dialogResult?.let {
@@ -60,20 +67,23 @@ fun GameScreen(
         }
     }
 
+    // Retrieves the current puzzle asset
     val puzzle = gameViewModel.currentPuzzle
     val imageBitmap = puzzle?.let { rememberAssetImage(it.imagePath) }
     
+    // UI Adaptation for Landscape vs Portrait
     val configuration = LocalConfiguration.current
     val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
     val scrollState = rememberScrollState()
 
-    // Validation logic for answer
+    // Answer validation logic
     val answerInput = gameViewModel.answerInput
     val isAnswerEmpty = answerInput.isBlank()
     val isAnswerTooLong = answerInput.length > 6
     val isAnswerInvalidFormat = answerInput.any { !it.isDigit() }
     val isAnswerInvalid = isAnswerEmpty || isAnswerTooLong || isAnswerInvalidFormat
 
+    // Localized feedback messages for input errors
     val answerErrorMessage = when {
         isAnswerTooLong -> stringResource(R.string.error_answer_too_long)
         isAnswerInvalidFormat -> stringResource(R.string.error_answer_invalid)
@@ -88,7 +98,7 @@ fun GameScreen(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         if (isLandscape) {
-            // Landscape Layout
+            // Horizontal layout for wide screens
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(16.dp)
@@ -117,6 +127,7 @@ fun GameScreen(
                     modifier = Modifier.weight(1f),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
+                    // Game Status Header
                     Column(modifier = Modifier.fillMaxWidth()) {
                         Text(stringResource(R.string.game_score, gameViewModel.score, gameViewModel.maxScore))
                         Text(stringResource(R.string.game_puzzle_index, gameViewModel.currentIndex + 1, gameViewModel.puzzles.size))
@@ -125,6 +136,7 @@ fun GameScreen(
 
                     Spacer(modifier = Modifier.height(16.dp))
 
+                    // User input with validation integration
                     OutlinedTextField(
                         value = answerInput,
                         onValueChange = { if (it.length <= 8) gameViewModel.answerInput = it },
@@ -144,6 +156,7 @@ fun GameScreen(
 
                     Spacer(modifier = Modifier.height(16.dp))
 
+                    // Footer Info
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceBetween
@@ -154,7 +167,7 @@ fun GameScreen(
                 }
             }
         } else {
-            // Portrait Layout
+            // Vertical layout for tall screens
             Spacer(Modifier.height(20.dp))
 
             Row(
@@ -216,6 +229,7 @@ fun GameScreen(
         }
     }
 
+    // Modal dialog for answer result feedback
     gameViewModel.dialogResult?.let { (isCorrect, answer) ->
         val message = if (isCorrect) {
             stringResource(R.string.game_correct)
