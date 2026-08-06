@@ -49,10 +49,10 @@ fun SettingScreen(
     navController: NavHostController,
     selectedLevel: String,
     onLevelChange: (String) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     // Dropdown expanded state preserved during rotation
-    var levelExpanded by rememberSaveable { mutableStateOf(false) }
+    var levelExpanded by rememberSaveable { mutableStateOf(value = false) }
     
     val configuration = LocalConfiguration.current
     val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
@@ -136,16 +136,13 @@ fun LevelDropdown(
     selectedLevel: String,
     onLevelChange: (String) -> Unit
 ) {
-    // Explicitly using LocalContext for string retrieval ensures immediate translation updates
-    val context = LocalContext.current
-
     ExposedDropdownMenuBox(
         expanded = expanded,
         onExpandedChange = onExpandedChange,
         modifier = Modifier.padding(top = 8.dp)
     ) {
         OutlinedTextField(
-            value = context.getString(R.string.level_label, selectedLevel),
+            value = stringResource(R.string.level_label, selectedLevel),
             onValueChange = {},
             readOnly = true,
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
@@ -159,7 +156,7 @@ fun LevelDropdown(
         ) {
             LEVELS.forEach { lvl ->
                 DropdownMenuItem(
-                    text = { Text(context.getString(R.string.level_label, lvl)) },
+                    text = { Text(stringResource(R.string.level_label, lvl)) },
                     onClick = {
                         onLevelChange(lvl)
                         onExpandedChange(false)

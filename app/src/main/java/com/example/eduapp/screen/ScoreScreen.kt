@@ -22,11 +22,7 @@ import androidx.navigation.NavHostController
 import com.example.eduapp.R
 import com.example.eduapp.database.User
 import com.example.eduapp.viewmodel.AppViewModel
-import java.text.SimpleDateFormat
 import java.util.Locale
-
-// Standardized date format for score records
-private val dateFormat = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.ENGLISH)
 
 /**
  * Screen displaying the history of game scores stored in the Room database.

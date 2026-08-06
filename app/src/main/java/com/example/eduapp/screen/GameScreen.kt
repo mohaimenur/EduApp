@@ -1,6 +1,5 @@
 package com.example.eduapp.screen
 
-import android.content.Context
 import android.content.res.Configuration
 import android.media.MediaPlayer
 import androidx.compose.foundation.Image
@@ -29,12 +28,11 @@ import com.example.eduapp.viewmodel.GameViewModel
  */
 @Composable
 fun GameScreen(
-    currentContext: Context,
     navController: NavHostController,
     gameViewModel: GameViewModel,
     username: String,
     level: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     // Starts the game session with provided username and level
     LaunchedEffect(username, level) {

@@ -126,7 +126,7 @@ fun AppNav(applicationContext: Context) {
                                 selected = currentRoute == "setting",
                                 onClick = { navController.navigate("setting") },
                                 icon = { Icon(Icons.Default.Settings, contentDescription = "Settings") },
-                                label = { Text(stringResource(R.string.settings)) }
+                                label = { Text(stringResource(R.string.settings)) },
                             )
                             NavigationBarItem(
                                 selected = currentRoute == "score",
@@ -149,7 +149,6 @@ fun AppNav(applicationContext: Context) {
                             navController = navController,
                             username = username,
                             onUsernameChange = { username = it },
-                            currentLanguage = language,
                             onLanguageChange = { language = it }
                         )
                     }
@@ -162,7 +161,6 @@ fun AppNav(applicationContext: Context) {
                     }
                     composable("game") {
                         GameScreen(
-                            currentContext = localizedContext,
                             navController = navController,
                             gameViewModel = gameViewModel,
                             username = username,

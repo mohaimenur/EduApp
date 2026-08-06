@@ -34,7 +34,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -53,12 +52,11 @@ fun LandingScreen(
     navController: NavHostController,
     username: String,
     onUsernameChange: (String) -> Unit,
-    currentLanguage: String,
     onLanguageChange: (String) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     // Controls the visibility of the language selection dropdown
-    var langExpanded by rememberSaveable { mutableStateOf(false) }
+    var langExpanded by rememberSaveable { mutableStateOf(value = false) }
     
     // UI adaptation based on screen orientation
     val configuration = LocalConfiguration.current
@@ -68,7 +66,7 @@ fun LandingScreen(
     // Real-time Input Validation logic
     val isUserNameEmpty = username.isBlank()
     val isUserNameTooLong = username.length > 15
-    val hasInvalidChars = username.any { !it.isLetterOrDigit() && it != ' ' }
+    val hasInvalidChars = username.any { (!it.isLetterOrDigit()) && it != ' ' }
     
     // Aggregated state to enable/disable navigation
     val isUsernameInvalid = isUserNameEmpty || isUserNameTooLong || hasInvalidChars
